@@ -54,37 +54,37 @@ export default function FinalScreen({
       animate={{ opacity: 1, scale: 1 }}
       exit={{ opacity: 0, scale: 0.95 }}
       transition={{ duration: 0.4 }}
-      className="flex flex-col items-center justify-center min-h-screen w-full max-w-2xl mx-auto px-4 py-8 relative z-10 text-center bg-radial from-yellow-400/5 via-transparent to-transparent"
+      className="flex flex-col items-center justify-center min-h-screen sm:h-screen w-full max-w-2xl mx-auto px-4 py-4 sm:py-6 relative z-10 text-center bg-radial from-yellow-400/5 via-transparent to-transparent overflow-y-auto"
     >
       {/* Medal icon */}
-      <div className="text-6xl mb-3 drop-shadow-[0_8px_16px_rgba(255,215,64,0.3)] animate-bounce">
+      <div className="text-4xl mb-1 drop-shadow-[0_8px_16px_rgba(255,215,64,0.3)] animate-bounce">
         🎖️
       </div>
 
-      <h2 className="font-ops text-4xl sm:text-5xl font-black text-yellow-400 tracking-wider mb-8 drop-shadow-md">
+      <h2 className="font-ops text-2xl sm:text-3xl font-black text-yellow-400 tracking-wider mb-4 drop-shadow-md">
         應變演練‧成功完成！
       </h2>
 
       {/* Radial score ring display */}
-      <div className="relative w-40 h-40 rounded-full border-4 border-yellow-400 flex flex-col items-center justify-center bg-gray-950/80 shadow-[0_0_50px_rgba(250,204,21,0.25)] mb-6 transition-all duration-300 hover:scale-105">
-        <div className="font-ops text-5xl font-black text-yellow-400 leading-none">
+      <div className="relative w-28 h-28 rounded-full border-4 border-yellow-400 flex flex-col items-center justify-center bg-gray-950/80 shadow-[0_0_35px_rgba(250,204,21,0.25)] mb-4 transition-all duration-300 hover:scale-105">
+        <div className="font-ops text-3xl font-black text-yellow-400 leading-none">
           {score}
         </div>
-        <div className="text-[10px] font-black uppercase text-gray-500 tracking-widest mt-1.5 label-total">
+        <div className="text-[8px] font-black uppercase text-gray-500 tracking-widest mt-1 label-total">
           災害綜合防護分
         </div>
       </div>
 
       {/* Expert Rating Summary */}
-      <div className="bg-gray-900/60 border border-white/5 rounded-2xl py-4.5 px-6 max-w-md mb-8 shadow-md">
-        <p className="text-gray-100 text-sm sm:text-base font-semibold leading-relaxed">
+      <div className="bg-gray-900/60 border border-white/5 rounded-xl py-2 px-4 max-w-md mb-4 shadow-md">
+        <p className="text-gray-100 text-xs sm:text-sm font-semibold leading-relaxed">
           {rating}
         </p>
       </div>
 
       {/* Chapters Detailed Breakdown Bento Grid */}
-      <div className="flex flex-col gap-3.5 w-full max-w-md mb-10 text-left">
-        <h4 className="text-xs font-black uppercase text-gray-500 tracking-widest border-b border-white/5 pb-2 mb-1 pl-1">
+      <div className="flex flex-col gap-2 w-full max-w-md mb-5 text-left">
+        <h4 className="text-[10px] font-black uppercase text-gray-500 tracking-widest border-b border-white/5 pb-1 mb-0.5 pl-1">
           關卡答對率與星級徽章
         </h4>
 
@@ -94,11 +94,11 @@ export default function FinalScreen({
             return (
               <div
                 key={ch.id}
-                className="flex items-center gap-3 bg-gray-900/40 border border-white/5 rounded-xl px-4 py-3 opacity-50"
+                className="flex items-center gap-2 bg-gray-900/40 border border-white/5 rounded-xl px-3 py-2 opacity-50"
               >
-                <div className="text-xl shrink-0">{ch.emoji}</div>
-                <div className="text-sm font-bold text-gray-400 flex-1">{ch.titleZh}</div>
-                <div className="text-xs font-semibold text-gray-500">未嘗試</div>
+                <div className="text-lg shrink-0">{ch.emoji}</div>
+                <div className="text-xs font-bold text-gray-400 flex-1">{ch.titleZh}</div>
+                <div className="text-[10px] font-semibold text-gray-500">未嘗試</div>
               </div>
             );
           }
@@ -114,18 +114,18 @@ export default function FinalScreen({
           return (
             <div
               key={ch.id}
-              className="flex items-center gap-4 bg-gray-900/60 border border-white/5 rounded-xl px-4 py-3.5 shadow-sm"
+              className="flex items-center gap-3 bg-gray-900/60 border border-white/5 rounded-xl px-3 py-2.5 shadow-sm"
             >
-              <div className="text-2xl shrink-0">{ch.emoji}</div>
+              <div className="text-xl shrink-0">{ch.emoji}</div>
               <div
-                className="text-sm sm:text-base font-black shrink-0 min-w-[42px]"
+                className="text-xs sm:text-sm font-black shrink-0 min-w-[36px]"
                 style={{ color: ch.color }}
               >
                 {ch.titleZh}
               </div>
 
               {/* Progress bar representing ratio */}
-              <div className="flex-1 h-1.5 bg-white/5 rounded-full overflow-hidden">
+              <div className="flex-1 h-1 bg-white/5 rounded-full overflow-hidden">
                 <div
                   className={`h-full rounded-full ${progressColor}`}
                   style={{ width: `${frac * 100}%` }}
@@ -133,12 +133,12 @@ export default function FinalScreen({
               </div>
 
               {/* Fractional text correct answers */}
-              <div className="text-xs font-bold text-gray-400 min-w-[34px] text-right">
+              <div className="text-[11px] font-bold text-gray-400 min-w-[30px] text-right">
                 {r.correct}/{r.total}
               </div>
 
               {/* Stars badge reward */}
-              <div className="text-xs sm:text-sm tracking-wider font-semibold">
+              <div className="text-xs tracking-wider font-semibold">
                 {getStars(r.correct, r.total)}
               </div>
             </div>
@@ -147,20 +147,20 @@ export default function FinalScreen({
       </div>
 
       {/* Button Controls */}
-      <div className="flex flex-wrap gap-4 justify-center items-center w-full max-w-sm">
+      <div className="flex flex-wrap gap-2.5 justify-center items-center w-full max-w-sm">
         <button
           onClick={onReset}
-          className="inline-flex items-center gap-2 px-6 py-4 rounded-xl text-sm font-black text-gray-400 border border-white/10 hover:border-white/25 hover:text-white hover:bg-white/5 transition-all cursor-pointer"
+          className="inline-flex items-center gap-1.5 px-4.5 py-2.5 rounded-lg text-xs font-black text-gray-400 border border-white/10 hover:border-white/25 hover:text-white hover:bg-white/5 transition-all cursor-pointer"
         >
-          <RotateCcw className="w-4 h-4" />
+          <RotateCcw className="w-3.5 h-3.5" />
           重新挑戰
         </button>
 
         <button
           onClick={onGoToChapters}
-          className="inline-flex items-center gap-2 px-7 py-4 rounded-xl text-sm font-black text-white bg-gradient-to-r from-orange-500 to-red-600 shadow-[0_4px_25px_rgba(249,115,22,0.45)] hover:scale-105 active:scale-95 transition-all cursor-pointer border border-orange-400"
+          className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-lg text-xs font-black text-white bg-gradient-to-r from-orange-500 to-red-600 shadow-[0_4px_15px_rgba(249,115,22,0.45)] hover:scale-105 active:scale-95 transition-all cursor-pointer border border-orange-400"
         >
-          <LayoutGrid className="w-4.5 h-4.5" />
+          <LayoutGrid className="w-4 h-4" />
           回關卡列表
         </button>
       </div>
