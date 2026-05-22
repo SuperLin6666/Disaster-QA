@@ -1,0 +1,6 @@
+{
+  "name": "Disaster Survival Challenge Game",
+  "description": "An interactive Traditional Chinese disaster response quiz game covering earthquakes, typhoons, fires, and floods to teach crucial survival skills.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

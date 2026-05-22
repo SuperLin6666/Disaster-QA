@@ -1,0 +1,31 @@
+@import url('https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Exo+2:wght@300;400;500;600;700;800;900&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Exo 2", "Inter", system-ui, -apple-system, sans-serif;
+  --font-ops: "Black Ops One", "Exo 2", system-ui, sans-serif;
+}
+
+/* Custom global rules */
+body {
+  background-color: #05080f;
+  color: #e2e8f4;
+  overflow-x: hidden;
+  font-family: var(--font-sans);
+}
+
+/* Custom smooth dark scrollbar for the page */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #05080f;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(249, 115, 22, 0.3);
+  border-radius: 99px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(249, 115, 22, 0.6);
+}
