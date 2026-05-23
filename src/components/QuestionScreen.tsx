@@ -7,6 +7,18 @@ import { motion } from "motion/react";
 import { LogOut, ArrowRight, Flame } from "lucide-react";
 import { Chapter } from "../types";
 
+import eqCardUrl from "../assets/images/eq_ill_card_1779519005358.png";
+import tyCardUrl from "../assets/images/ty_ill_card_1779519025600.png";
+import fiCardUrl from "../assets/images/fi_ill_card_1779519043404.png";
+import flCardUrl from "../assets/images/fl_ill_card_1779519063508.png";
+
+const CHAPTER_IMAGES: Record<string, string> = {
+  earthquake: eqCardUrl,
+  typhoon: tyCardUrl,
+  fire: fiCardUrl,
+  flood: flCardUrl,
+};
+
 interface QuestionScreenProps {
   key?: string;
   chapter: Chapter;
@@ -117,9 +129,24 @@ export default function QuestionScreen({
 
       {/* Primary Question Card */}
       <div className="w-full bg-gray-900/60 border border-white/5 rounded-xl p-4 sm:p-5 shrink-0 shadow-2xl backdrop-blur-md mb-2 flex-grow flex flex-col justify-center">
-        {/* Question Counter Label */}
-        <div className="font-ops text-[10px] font-semibold tracking-widest text-gray-500 uppercase mb-2">
-          Q{qIdx + 1} · {chapter.title} CHALLENGE
+        {/* Question Counter Label and Thumbnail block */}
+        <div className="flex items-center gap-3 mb-3 border-b border-white/5 pb-2.5">
+          <div className="w-10 h-10 rounded-lg overflow-hidden border border-white/10 shrink-0 bg-gray-950 shadow-[0_2px_8px_rgba(0,0,0,0.5)]">
+            <img
+              src={CHAPTER_IMAGES[chapter.id] || ""}
+              alt={chapter.title}
+              className="w-full h-full object-cover select-none"
+              referrerPolicy="no-referrer"
+            />
+          </div>
+          <div>
+            <div className="font-ops text-[10px] font-bold tracking-widest text-gray-400 uppercase">
+              Q{qIdx + 1} · {chapter.title} CHALLENGE
+            </div>
+            <div className="text-[10px] font-black" style={{ color: chapter.color }}>
+              {chapter.emoji} {chapter.titleZh} 實戰演練
+            </div>
+          </div>
         </div>
 
         {/* Main Question Text */}

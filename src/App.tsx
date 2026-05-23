@@ -206,6 +206,7 @@ export default function App() {
               key="home-screen"
               chapters={CHAPTERS}
               onStartQuiz={handleStartQuiz}
+              onSelectChapter={handleSelectChapter}
               totalScore={state.score}
               totalCorrect={totalCorrect}
               totalQuestions={totalQuestions}
@@ -219,6 +220,7 @@ export default function App() {
               onSelectChapter={handleSelectChapter}
               onGoBack={handleGoBack}
               onShowFinalResults={handleShowFinalResults}
+              onReset={handleReset}
               doneChapters={state.done}
               results={state.results}
               totalScore={state.score}

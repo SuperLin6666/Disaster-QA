@@ -3,9 +3,22 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import { useState } from "react";
 import { motion } from "motion/react";
-import { ArrowLeft, Award, Flame, CheckCircle, Trophy } from "lucide-react";
+import { ArrowLeft, Award, Flame, CheckCircle, Trophy, Trash2 } from "lucide-react";
 import { Chapter, ChapterResult } from "../types";
+
+import eqCardUrl from "../assets/images/eq_ill_card_1779519005358.png";
+import tyCardUrl from "../assets/images/ty_ill_card_1779519025600.png";
+import fiCardUrl from "../assets/images/fi_ill_card_1779519043404.png";
+import flCardUrl from "../assets/images/fl_ill_card_1779519063508.png";
+
+const CHAPTER_IMAGES: Record<string, string> = {
+  earthquake: eqCardUrl,
+  typhoon: tyCardUrl,
+  fire: fiCardUrl,
+  flood: flCardUrl,
+};
 
 interface ChapterSelectScreenProps {
   key?: string;
@@ -13,6 +26,7 @@ interface ChapterSelectScreenProps {
   onSelectChapter: (idx: number) => void;
   onGoBack: () => void;
   onShowFinalResults: () => void;
+  onReset: () => void;
   doneChapters: string[];
   results: Record<string, ChapterResult>;
   totalScore: number;
@@ -25,12 +39,15 @@ export default function ChapterSelectScreen({
   onSelectChapter,
   onGoBack,
   onShowFinalResults,
+  onReset,
   doneChapters,
   results,
   totalScore,
   totalCorrect,
   streak,
 }: ChapterSelectScreenProps) {
+  const [showConfirm, setShowConfirm] = useState(false);
+
   const getStars = (correct: number, total: number) => {
     const ratio = correct / total;
     if (ratio === 1) return "⭐⭐⭐";
@@ -133,9 +150,17 @@ export default function ChapterSelectScreen({
 
               {/* Card Contents */}
               <div className="flex flex-col items-center relative z-10 w-full">
-                <span className="text-3xl sm:text-4xl mb-2 drop-shadow-[0_4px_8px_rgba(0,0,0,0.5)] transform group-hover:scale-110 transition-transform">
-                  {ch.emoji}
-                </span>
+                <div className="relative w-16 h-16 sm:w-20 sm:h-20 mb-2.5 rounded-xl overflow-hidden border border-white/10 shrink-0 bg-gray-950/80 shadow-[0_4px_12px_rgba(0,0,0,0.4)] transform group-hover:scale-105 transition-transform duration-300">
+                  <img
+                    src={CHAPTER_IMAGES[ch.id] || ""}
+                    alt={ch.title}
+                    className="w-full h-full object-cover select-none"
+                    referrerPolicy="no-referrer"
+                  />
+                  <div className="absolute right-1 bottom-1 bg-black/60 rounded-md px-1 py-0.5 text-xs font-bold leading-none select-none">
+                    {ch.emoji}
+                  </div>
+                </div>
                 <h3
                   className="font-ops text-base sm:text-lg font-bold tracking-wider mb-0.5"
                   style={{ color: ch.color }}
@@ -176,6 +201,35 @@ export default function ChapterSelectScreen({
           <ArrowLeft className="w-3.5 h-3.5" />
           回首頁
         </button>
+
+        {!showConfirm ? (
+          <button
+            onClick={() => setShowConfirm(true)}
+            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg text-xs font-extrabold text-red-400/80 border border-red-500/20 hover:border-red-500/45 hover:text-red-400 hover:bg-red-500/5 transition-all cursor-pointer"
+          >
+            <Trash2 className="w-3.5 h-3.5" />
+            清除當前紀錄
+          </button>
+        ) : (
+          <div className="flex items-center gap-2 bg-red-500/10 border border-red-500/30 rounded-lg p-1.5 px-3 text-xs">
+            <span className="font-bold text-red-300">確定要重置？</span>
+            <button
+              onClick={() => {
+                onReset();
+                setShowConfirm(false);
+              }}
+              className="px-2.5 py-1 bg-red-500 hover:bg-red-600 text-white rounded text-[10px] font-black cursor-pointer transition-colors"
+            >
+              確定
+            </button>
+            <button
+              onClick={() => setShowConfirm(false)}
+              className="px-2.5 py-1 bg-gray-800 hover:bg-gray-700 text-gray-300 rounded text-[10px] font-bold cursor-pointer transition-colors"
+            >
+              取消
+            </button>
+          </div>
+        )}
 
         {allCompleted ? (
           <button

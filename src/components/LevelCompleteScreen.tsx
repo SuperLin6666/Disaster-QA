@@ -7,6 +7,18 @@ import { motion } from "motion/react";
 import { Check, X, ShieldAlert, Grid, ArrowRight } from "lucide-react";
 import { Chapter } from "../types";
 
+import eqCardUrl from "../assets/images/eq_ill_card_1779519005358.png";
+import tyCardUrl from "../assets/images/ty_ill_card_1779519025600.png";
+import fiCardUrl from "../assets/images/fi_ill_card_1779519043404.png";
+import flCardUrl from "../assets/images/fl_ill_card_1779519063508.png";
+
+const CHAPTER_IMAGES: Record<string, string> = {
+  earthquake: eqCardUrl,
+  typhoon: tyCardUrl,
+  fire: fiCardUrl,
+  flood: flCardUrl,
+};
+
 interface LevelCompleteScreenProps {
   key?: string;
   chapter: Chapter;
@@ -64,14 +76,27 @@ export default function LevelCompleteScreen({
         backgroundImage: `radial-gradient(ellipse 60% 50% at 50% 30%, ${chapter.color}15 0%, transparent 70%)`,
       }}
     >
-      {/* Animated big glyph */}
+      {/* Integrated high-fidelity 3D illustrated card badge */}
       <motion.div
-        initial={{ scale: 0, rotate: -20 }}
+        initial={{ scale: 0, rotate: -15 }}
         animate={{ scale: 1, rotate: 0 }}
-        transition={{ type: "spring", stiffness: 200, delay: 0.1 }}
-        className="text-5xl sm:text-6xl mb-2 filter drop-shadow-[0_10px_20px_rgba(0,0,0,0.5)]"
+        transition={{ type: "spring", stiffness: 180, delay: 0.1 }}
+        className="relative mb-3 flex items-center justify-center shrink-0 select-none pb-2"
       >
-        {glyph}
+        <div 
+          className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl overflow-hidden border-2 shadow-[0_8px_25px_rgba(0,0,0,0.55)] bg-gray-950 flex-shrink-0"
+          style={{ borderColor: chapter.color }}
+        >
+          <img
+            src={CHAPTER_IMAGES[chapter.id] || ""}
+            alt={chapter.title}
+            className="w-full h-full object-cover"
+            referrerPolicy="no-referrer"
+          />
+        </div>
+        <div className="absolute -bottom-1 -right-2 text-3xl filter drop-shadow-[0_4px_8px_rgba(0,0,0,0.5)]">
+          {glyph}
+        </div>
       </motion.div>
 
       {/* Completion verdict */}
