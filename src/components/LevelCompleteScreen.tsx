@@ -6,6 +6,7 @@
 import { motion } from "motion/react";
 import { Check, X, ShieldAlert, Grid, ArrowRight } from "lucide-react";
 import { Chapter } from "../types";
+import FullscreenButton from "./FullscreenButton";
 
 import eqCardUrl from "../assets/images/eq_ill_card_1779519005358.png";
 import tyCardUrl from "../assets/images/ty_ill_card_1779519025600.png";
@@ -72,7 +73,7 @@ export default function LevelCompleteScreen({
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -20 }}
-      className="flex flex-col items-center justify-center min-h-screen w-full max-w-2xl mx-auto px-4 py-8 sm:py-12 relative z-10 text-center overflow-y-auto"
+      className="flex flex-col items-center justify-center min-h-screen w-full max-w-2xl mx-auto px-4 py-4 sm:py-6 relative z-10 text-center overflow-y-auto"
       style={{
         backgroundImage: `radial-gradient(ellipse 60% 50% at 50% 30%, ${chapter.color}15 0%, transparent 70%)`,
       }}
@@ -183,6 +184,10 @@ export default function LevelCompleteScreen({
             <span>🎖️ 完成 ‧ 結算總成績</span>
           </button>
         )}
+      </div>
+
+      <div className="mt-5 pb-2 shrink-0">
+        <FullscreenButton />
       </div>
     </motion.div>
   );

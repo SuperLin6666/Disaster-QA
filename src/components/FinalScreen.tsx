@@ -6,6 +6,7 @@
 import { motion } from "motion/react";
 import { RotateCcw, LayoutGrid } from "lucide-react";
 import { Chapter, ChapterResult } from "../types";
+import FullscreenButton from "./FullscreenButton";
 
 interface FinalScreenProps {
   key?: string;
@@ -54,7 +55,7 @@ export default function FinalScreen({
       animate={{ opacity: 1, scale: 1 }}
       exit={{ opacity: 0, scale: 0.95 }}
       transition={{ duration: 0.4 }}
-      className="flex flex-col items-center justify-center min-h-screen sm:h-screen w-full max-w-2xl mx-auto px-4 py-4 sm:py-6 relative z-10 text-center bg-radial from-yellow-400/5 via-transparent to-transparent overflow-y-auto"
+      className="flex flex-col items-center justify-center min-h-screen w-full max-w-2xl mx-auto px-4 py-4 sm:py-6 relative z-10 text-center bg-radial from-yellow-400/5 via-transparent to-transparent overflow-y-auto"
     >
       {/* Medal icon */}
       <div className="text-4xl mb-1 drop-shadow-[0_8px_16px_rgba(255,215,64,0.3)] animate-bounce">
@@ -163,6 +164,10 @@ export default function FinalScreen({
           <LayoutGrid className="w-4 h-4" />
           回關卡列表
         </button>
+      </div>
+
+      <div className="mt-5 pb-2 shrink-0">
+        <FullscreenButton />
       </div>
     </motion.div>
   );

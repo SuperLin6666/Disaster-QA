@@ -7,6 +7,7 @@ import { useState } from "react";
 import { motion } from "motion/react";
 import { ArrowLeft, Award, Flame, CheckCircle, Trophy, Trash2 } from "lucide-react";
 import { Chapter, ChapterResult } from "../types";
+import FullscreenButton from "./FullscreenButton";
 
 import eqCardUrl from "../assets/images/eq_ill_card_1779519005358.png";
 import tyCardUrl from "../assets/images/ty_ill_card_1779519025600.png";
@@ -63,7 +64,7 @@ export default function ChapterSelectScreen({
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -15 }}
       transition={{ duration: 0.3 }}
-      className="flex flex-col items-center justify-start min-h-screen sm:h-screen w-full max-w-2xl mx-auto px-4 py-4 relative z-10 overflow-y-auto"
+      className="flex flex-col items-center justify-start min-h-screen w-full max-w-2xl mx-auto px-4 py-4 relative z-10 overflow-y-auto"
     >
       <header className="text-center mb-6 shrink-0">
         <h2 className="font-ops text-4xl sm:text-5xl font-black tracking-wider text-white mb-2">
@@ -245,6 +246,10 @@ export default function ChapterSelectScreen({
             🔒 回答完其餘關卡解鎖最終成果
           </div>
         )}
+      </div>
+
+      <div className="mt-4 pb-4 shrink-0">
+        <FullscreenButton />
       </div>
     </motion.div>
   );
