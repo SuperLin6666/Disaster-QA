@@ -128,16 +128,13 @@ export default function QuestionScreen({
   const total = questionsList.length;
   const progressPercent = Math.round((qIdx / total) * 100);
 
-  const [timeLeft, setTimeLeft] = useState(20);
+  const [prevView, setPrevView] = useState({ qIdx, answered });
+  const [timeLeft, setTimeLeft] = useState(answered ? 10 : 20);
 
-  // Sync / Reset Timer based on phase (20s for answering, 10s for explanation sheet)
-  useEffect(() => {
-    if (!answered) {
-      setTimeLeft(20);
-    } else {
-      setTimeLeft(10);
-    }
-  }, [qIdx, answered]);
+  if (prevView.qIdx !== qIdx || prevView.answered !== answered) {
+    setPrevView({ qIdx, answered });
+    setTimeLeft(answered ? 10 : 20);
+  }
 
   // Handle ticking countdown
   useEffect(() => {
@@ -145,13 +142,6 @@ export default function QuestionScreen({
       setTimeLeft((prev) => {
         if (prev <= 1) {
           clearInterval(timer);
-          if (!answered) {
-            // Auto timeout (simulate incorrect choices via -1)
-            onPickOption(-1);
-          } else {
-            // Auto transition to the next question
-            onNextQuestion();
-          }
           return 0;
         }
         return prev - 1;
@@ -159,7 +149,18 @@ export default function QuestionScreen({
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [qIdx, answered, onPickOption, onNextQuestion]);
+  }, [qIdx, answered]);
+
+  // Handle auto transitions when countdown reaches 0 safely within useEffect
+  useEffect(() => {
+    if (timeLeft === 0) {
+      if (!answered) {
+        onPickOption(-1);
+      } else {
+        onNextQuestion();
+      }
+    }
+  }, [timeLeft, answered, onPickOption, onNextQuestion]);
 
   // Calculate potential scores or streak bonuses
   const bonus = Math.min((streak - 1) * 5, 20);
@@ -254,10 +255,10 @@ export default function QuestionScreen({
         </div>
 
         {/* Primary Large Question Card with Beautiful Illustration Header */}
-        <div className="w-full bg-gray-900/40 border border-white/5 rounded-2xl p-5 sm:p-8 shrink-0 shadow-2xl backdrop-blur-lg flex-grow flex flex-col justify-center relative overflow-hidden">
+        <div className="w-full bg-gray-900/40 border border-white/5 rounded-2xl p-5 sm:p-8 shrink-0 shadow-2xl backdrop-blur-lg flex-grow flex flex-col justify-center relative overflow-visible">
           
           {/* Running time slider strip at the top of the question card */}
-          <div className="absolute top-0 left-0 right-0 h-1.5 bg-white/5 overflow-hidden">
+          <div className="absolute top-0 left-0 right-0 h-1.5 bg-white/5 overflow-hidden rounded-t-2xl">
             <div 
               className="h-full transition-all duration-1000 ease-linear"
               style={{
@@ -384,7 +385,7 @@ export default function QuestionScreen({
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: "100%" }}
             transition={{ type: "spring", damping: 25, stiffness: 120 }}
-            className="fixed inset-0 w-full h-full z-50 flex items-center justify-center px-4 py-4 md:py-6 overflow-y-auto backdrop-blur-2xl bg-slate-950/98"
+            className="fixed inset-0 w-full h-full z-50 flex flex-col items-center justify-start px-4 py-8 md:py-12 overflow-y-auto backdrop-blur-2xl bg-slate-950/98"
           >
             {/* Soft background glow based on correctness */}
             <div 
@@ -397,7 +398,7 @@ export default function QuestionScreen({
             />
 
             {/* Compact content container */}
-            <div className="relative w-full max-w-xl bg-gray-900/90 border border-white/10 rounded-2xl p-4 sm:p-6 shadow-[0_15px_50px_rgba(0,0,0,0.8)] text-center flex flex-col gap-4 my-auto select-none">
+            <div className="relative w-full max-w-xl bg-gray-900/90 border border-white/10 rounded-2xl p-4 sm:p-6 shadow-[0_15px_50px_rgba(0,0,0,0.8)] text-center flex flex-col gap-4 my-6 sm:my-10 select-none">
               
               {/* Confetti details */}
               <div className="absolute top-3 left-4 text-gray-700 animate-spin whitespace-nowrap overflow-hidden pointer-events-none text-xs">
