@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { 
   LogOut, 
@@ -128,6 +128,39 @@ export default function QuestionScreen({
   const total = questionsList.length;
   const progressPercent = Math.round((qIdx / total) * 100);
 
+  const [timeLeft, setTimeLeft] = useState(20);
+
+  // Sync / Reset Timer based on phase (20s for answering, 10s for explanation sheet)
+  useEffect(() => {
+    if (!answered) {
+      setTimeLeft(20);
+    } else {
+      setTimeLeft(10);
+    }
+  }, [qIdx, answered]);
+
+  // Handle ticking countdown
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setTimeLeft((prev) => {
+        if (prev <= 1) {
+          clearInterval(timer);
+          if (!answered) {
+            // Auto timeout (simulate incorrect choices via -1)
+            onPickOption(-1);
+          } else {
+            // Auto transition to the next question
+            onNextQuestion();
+          }
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [qIdx, answered, onPickOption, onNextQuestion]);
+
   // Calculate potential scores or streak bonuses
   const bonus = Math.min((streak - 1) * 5, 20);
   const earnedPoints = 10 + bonus;
@@ -223,6 +256,18 @@ export default function QuestionScreen({
         {/* Primary Large Question Card with Beautiful Illustration Header */}
         <div className="w-full bg-gray-900/40 border border-white/5 rounded-2xl p-5 sm:p-8 shrink-0 shadow-2xl backdrop-blur-lg flex-grow flex flex-col justify-center relative overflow-hidden">
           
+          {/* Running time slider strip at the top of the question card */}
+          <div className="absolute top-0 left-0 right-0 h-1.5 bg-white/5 overflow-hidden">
+            <div 
+              className="h-full transition-all duration-1000 ease-linear"
+              style={{
+                width: `${(timeLeft / 20) * 100}%`,
+                backgroundColor: timeLeft <= 5 ? "#ef4444" : activeCh.color,
+                boxShadow: timeLeft <= 5 ? "0 0 10px #ef4444" : `0 0 10px ${activeCh.color}`,
+              }}
+            />
+          </div>
+          
           {/* Question illustration situation context background decoration */}
           <div className="flex flex-col md:flex-row items-center gap-6 sm:gap-8 w-full">
             
@@ -249,17 +294,32 @@ export default function QuestionScreen({
             {/* Question Text block & Answers block */}
             <div className="flex-1 w-full flex flex-col justify-between min-h-full">
               <div className="mb-6">
-                {/* Situation Label */}
-                <span
-                  className="inline-flex items-center px-4 py-2 rounded-xl text-xs sm:text-sm md:text-base font-black uppercase tracking-wider border-2 mb-4 select-none shadow-[0_4px_12px_rgba(0,0,0,0.3)]"
-                  style={{
-                    borderColor: `${activeCh.color}70`,
-                    color: activeCh.color,
-                    backgroundColor: activeCh.glow,
-                  }}
-                >
-                  🎯 題目分類 ‧ {q.scenario}
-                </span>
+                {/* Situation Label & Timer */}
+                <div className="flex flex-wrap items-center justify-between gap-3 mb-4 select-none">
+                  <span
+                    className="inline-flex items-center px-4 py-2 rounded-xl text-xs sm:text-sm md:text-base font-black uppercase tracking-wider border-2 select-none shadow-[0_4px_12px_rgba(0,0,0,0.3)]"
+                    style={{
+                      borderColor: `${activeCh.color}70`,
+                      color: activeCh.color,
+                      backgroundColor: activeCh.glow,
+                    }}
+                  >
+                    🎯 題目分類 ‧ {q.scenario}
+                  </span>
+
+                  {/* Gigantic glowing countdown badge */}
+                  <div className={`flex items-center gap-2 px-4 py-2 rounded-xl border-2 font-black text-xs sm:text-sm md:text-base tracking-widest transition-all duration-300 ${
+                    timeLeft <= 5 
+                      ? "bg-red-500/25 border-red-500 text-red-400 animate-pulse shadow-[0_0_15px_rgba(239,68,68,0.4)]" 
+                      : "bg-orange-500/10 border-orange-500/50 text-orange-400 shadow-[0_0_10px_rgba(249,115,22,0.15)]"
+                  }`}>
+                    <span className="relative flex h-3 w-3">
+                      <span className={`animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 ${timeLeft <= 5 ? 'bg-red-400' : 'bg-orange-400'}`}></span>
+                      <span className={`relative inline-flex rounded-full h-3 w-3 ${timeLeft <= 5 ? 'bg-red-500' : 'bg-orange-500'}`}></span>
+                    </span>
+                    <span>⏱️ 倒數 {timeLeft} 秒</span>
+                  </div>
+                </div>
 
                 {/* Highly Prominent, Extremely clear Question Text */}
                 <h2 className="text-2xl sm:text-3xl md:text-4xl font-black leading-snug tracking-wide text-white font-sans drop-shadow-md">
@@ -405,15 +465,28 @@ export default function QuestionScreen({
               </div>
 
               {/* Slogan */}
-              <div 
-                className="font-ops text-sm sm:text-base md:text-lg font-black tracking-widest py-1.5 px-6 rounded-xl border-2 w-fit mx-auto"
-                style={{
-                  borderColor: `${activeCh.color}60`,
-                  color: activeCh.color,
-                  backgroundColor: activeCh.glow,
-                }}
-              >
-                【 {q.slogan} 】
+              <div className="flex flex-col gap-2 items-center mx-auto select-none">
+                <div 
+                  className="font-ops text-sm sm:text-base md:text-lg font-black tracking-widest py-1.5 px-6 rounded-xl border-2 w-fit mx-auto"
+                  style={{
+                    borderColor: `${activeCh.color}60`,
+                    color: activeCh.color,
+                    backgroundColor: activeCh.glow,
+                  }}
+                >
+                  【 {q.slogan} 】
+                </div>
+                
+                {/* 10s Countdown notice to next slide */}
+                <div className="text-gray-200 font-extrabold text-sm sm:text-base flex items-center gap-2 bg-white/5 border border-white/10 px-5 py-2 rounded-full shadow-lg animate-pulse">
+                  <span className="relative flex h-2.5 w-2.5">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-yellow-400 opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-yellow-500"></span>
+                  </span>
+                  <span>⏱️ 停留</span>
+                  <span className="text-yellow-400 font-black text-lg mx-0.5">{timeLeft}</span>
+                  <span>秒後，將自動進入下一題！</span>
+                </div>
               </div>
 
               {/* High-visibility QA recap details */}
@@ -446,14 +519,16 @@ export default function QuestionScreen({
                 {!isUserCorrect && (
                   <div className="bg-red-500/10 border border-red-500/30 p-4 rounded-xl flex items-center gap-4">
                     <div className="w-12 h-12 bg-red-500 text-white rounded-xl font-ops font-black text-xl sm:text-2xl flex items-center justify-center shrink-0 shadow-lg select-none">
-                      {selectedOption !== null ? selectedOption + 1 : "?"}
+                      {selectedOption !== null && selectedOption >= 0 ? selectedOption + 1 : "⌛"}
                     </div>
                     <div className="flex-1 min-w-0">
                       <span className="text-xs text-red-500 font-black tracking-widest uppercase block mb-1">
-                        YOUR CHOICE / 您的錯誤選擇
+                        YOUR CHOICE / 您的選擇
                       </span>
                       <span className="text-sm sm:text-base md:text-lg text-red-100 font-extrabold leading-snug block">
-                        {selectedOption !== null ? q.opts[selectedOption] : "未選擇"}
+                        {selectedOption !== null && selectedOption >= 0 
+                          ? q.opts[selectedOption] 
+                          : "答題超時未作答 (逾時)"}
                       </span>
                     </div>
                   </div>
@@ -476,7 +551,11 @@ export default function QuestionScreen({
                   onClick={onNextQuestion}
                   className="w-full inline-flex items-center justify-center gap-2 px-6 py-4 rounded-xl text-base sm:text-lg font-black text-white bg-gradient-to-r from-orange-500 to-red-600 shadow-[0_4px_20px_rgba(249,115,22,0.45)] hover:scale-[1.01] active:scale-[0.99] transition-all cursor-pointer border border-orange-400"
                 >
-                  <span>{qIdx + 1 >= total ? "進入關卡成果結算 🏁" : "理解了，下一題 🚀"}</span>
+                  <span>
+                    {qIdx + 1 >= total 
+                      ? `進入關卡成果結算 🏁 (${timeLeft} 秒後自動結算)` 
+                      : `理解了，下一題 🚀 (${timeLeft} 秒後自動推進)`}
+                  </span>
                   <ArrowRight className="w-5 h-5 animate-bounce" />
                 </button>
               </div>

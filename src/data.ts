@@ -586,14 +586,21 @@ export function prepareChapterQuestions(questions: Question[]): Question[] {
 }
 
 export function prepareMixedQuestions(): Question[] {
-  // Pick exactly 1 random question from each of the 4 chapters
-  const pickedQuestions = CHAPTERS.map((ch) => {
-    const randomIdx = Math.floor(Math.random() * ch.questions.length);
-    const q = ch.questions[randomIdx];
-    return {
-      ...q,
-      chapter: ch,
-    };
+  // Pick exactly 5 random, unique questions from each of the 4 chapters (Total = 20 questions)
+  const pickedQuestions: Question[] = [];
+
+  CHAPTERS.forEach((ch) => {
+    const indices = Array.from({ length: ch.questions.length }, (_, i) => i);
+    const shuffledIndices = shuffleArray(indices);
+    // Grab the first 5 unique questions
+    for (let i = 0; i < 5; i++) {
+      const qIndex = shuffledIndices[i];
+      const q = ch.questions[qIndex];
+      pickedQuestions.push({
+        ...q,
+        chapter: ch,
+      });
+    }
   });
 
   // Shuffle the chosen questions' order
