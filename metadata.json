@@ -1,5 +1,5 @@
 {
-  "name": "Disaster Survival Challenge Game",
+  "name": "防災知識PK賽",
   "description": "An interactive Traditional Chinese disaster response quiz game covering earthquakes, typhoons, fires, and floods to teach crucial survival skills.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]

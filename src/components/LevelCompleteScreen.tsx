@@ -71,7 +71,7 @@ export default function LevelCompleteScreen({
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -20 }}
-      className="flex flex-col items-center justify-center min-h-screen sm:h-screen w-full max-w-2xl mx-auto px-4 py-4 sm:py-6 relative z-10 text-center"
+      className="flex flex-col items-center justify-center min-h-screen w-full max-w-2xl mx-auto px-4 py-8 sm:py-12 relative z-10 text-center overflow-y-auto"
       style={{
         backgroundImage: `radial-gradient(ellipse 60% 50% at 50% 30%, ${chapter.color}15 0%, transparent 70%)`,
       }}

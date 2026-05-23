@@ -39,6 +39,24 @@ export default function HomeScreen({
     };
   }, []);
 
+  const requestFullscreenSafe = () => {
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen().catch((err) => {
+        console.warn("Fullscreen permission denied:", err);
+      });
+    }
+  };
+
+  const handleStartActiveQuiz = () => {
+    requestFullscreenSafe();
+    onStartQuiz();
+  };
+
+  const handleSelectActiveChapter = (idx: number) => {
+    requestFullscreenSafe();
+    onSelectChapter(idx);
+  };
+
   const handleToggleFullscreen = () => {
     if (!document.fullscreenElement) {
       document.documentElement.requestFullscreen().catch((err) => {
@@ -58,7 +76,7 @@ export default function HomeScreen({
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, exit: -15 }}
       transition={{ duration: 0.4 }}
-      className="relative flex flex-col items-center justify-center min-h-screen sm:h-screen px-4 py-4 sm:py-6 text-center bg-radial from-amber-500/5 via-transparent to-transparent z-10 overflow-hidden"
+      className="relative flex flex-col items-center justify-center min-h-screen w-full px-4 py-8 sm:py-12 text-center bg-radial from-amber-500/5 via-transparent to-transparent z-10 overflow-y-auto"
     >
       {/* Radar sweep background indicator */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[min(480px,92vw)] h-[min(480px,92vw)] rounded-full border border-orange-500/10 pointer-events-none">
@@ -83,13 +101,13 @@ export default function HomeScreen({
         <h1 className="font-ops text-4xl sm:text-5xl md:text-6xl lg:text-7.5xl font-black leading-none tracking-wider mb-4 flex flex-col gap-1">
           <span className="text-gray-100 flex items-center justify-center gap-2">
             <ShieldAlert className="w-8 h-8 md:w-11 md:h-11 text-orange-500 animate-[bounce_2s_infinite]" />
-            災害應變
+            防災知識
           </span>
           <span className="text-orange-500 drop-shadow-[0_0_35px_rgba(249,115,22,0.4)]">
-            生存大挑戰
+            PK賽
           </span>
           <span className="text-[10px] sm:text-xs tracking-[0.4em] text-white/20 mt-1">
-            SURVIVAL QUIZ PLATFORM
+            DISASTER SURVIVAL PK CHALLENGE
           </span>
         </h1>
 
@@ -124,7 +142,7 @@ export default function HomeScreen({
             {chapters.map((ch, idx) => (
               <button
                 key={ch.id}
-                onClick={() => onSelectChapter(idx)}
+                onClick={() => handleSelectActiveChapter(idx)}
                 className="px-3.5 py-1.5 rounded-lg text-xs font-extrabold border bg-gray-950/40 hover:bg-white/5 hover:scale-105 active:scale-95 transition-all cursor-pointer whitespace-nowrap"
                 style={{ borderColor: ch.color, color: ch.color }}
               >
@@ -138,7 +156,7 @@ export default function HomeScreen({
         <div className="flex flex-col sm:flex-row items-center gap-3 w-full justify-center">
           <button
             id="start-challenge-btn"
-            onClick={onStartQuiz}
+            onClick={handleStartActiveQuiz}
             className="group relative inline-flex items-center gap-2.5 px-8 py-3.5 rounded-xl font-extrabold text-base text-white bg-gradient-to-r from-orange-500 to-red-600 shadow-[0_6px_25px_rgba(249,115,22,0.35)] hover:shadow-[0_12px_35px_rgba(249,115,22,0.5)] active:scale-95 transition-all duration-200 cursor-pointer"
           >
             <Play className="w-4 h-4 fill-white group-hover:scale-110 transition-transform" />
