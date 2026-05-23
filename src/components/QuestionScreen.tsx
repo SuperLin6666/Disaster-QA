@@ -124,6 +124,7 @@ export default function QuestionScreen({
 }: QuestionScreenProps) {
   const questionsList = activeQuestions || chapter.questions;
   const q = questionsList[qIdx];
+  const activeCh = q?.chapter || chapter;
   const total = questionsList.length;
   const progressPercent = Math.round((qIdx / total) * 100);
 
@@ -144,34 +145,34 @@ export default function QuestionScreen({
         className="w-full max-w-4xl flex flex-col items-center justify-between flex-grow gap-6"
       >
         {/* Top HUD Action Bar / Larger Panel */}
-        <div className="flex items-center justify-between gap-4 w-full bg-gray-900/40 border border-white/5 p-3 rounded-2xl backdrop-blur-md shrink-0">
+        <div className="flex items-center justify-between gap-4 w-full bg-gray-900/40 border border-white/10 p-4 rounded-2xl backdrop-blur-md shrink-0">
           {/* Chapter Icon and Tag Name */}
           <div
-            className="px-4 py-2 rounded-xl text-xs sm:text-sm font-extrabold border shrink-0 uppercase tracking-widest flex items-center gap-2 select-none"
+            className="px-5 py-2.5 rounded-xl text-sm sm:text-base md:text-lg font-black border shrink-0 uppercase tracking-widest flex items-center gap-2.5 select-none"
             style={{
-              borderColor: chapter.color,
-              color: chapter.color,
-              backgroundColor: chapter.glow,
+              borderColor: activeCh.color,
+              color: activeCh.color,
+              backgroundColor: activeCh.glow,
             }}
           >
-            <span>{chapter.emoji}</span>
-            <span>{chapter.titleZh} 關卡</span>
+            <span>{activeCh.emoji}</span>
+            <span>{activeCh.titleZh} 關卡</span>
           </div>
 
           {/* Progress Bar Widget */}
           <div className="flex-1 min-w-0 max-w-md hidden sm:block">
-            <div className="flex justify-between items-center text-[10px] font-black text-gray-400 tracking-wider mb-1.5 uppercase">
+            <div className="flex justify-between items-center text-xs sm:text-sm font-black text-gray-200 tracking-wider mb-2 uppercase">
               <span>
                 進度：第 {qIdx + 1} 題 / 共 {total} 題
               </span>
               <span>{progressPercent}%</span>
             </div>
-            <div className="h-2 bg-white/5 rounded-full overflow-hidden">
+            <div className="h-2.5 bg-white/5 rounded-full overflow-hidden">
               <div
                 className="h-full rounded-full transition-all duration-500 ease-out"
                 style={{
                   width: `${progressPercent}%`,
-                  background: `linear-gradient(90deg, ${chapter.color}, ${chapter.color}ee)`,
+                  background: `linear-gradient(90deg, ${activeCh.color}, ${activeCh.color}ee)`,
                 }}
               />
             </div>
@@ -183,19 +184,19 @@ export default function QuestionScreen({
               <motion.div
                 initial={{ scale: 0.8, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
-                className="flex items-center gap-1 bg-orange-500/10 border border-orange-500/40 rounded-xl px-2.5 py-1.5 font-bold text-xs text-orange-400 shrink-0"
+                className="flex items-center gap-1.5 bg-orange-500/10 border border-orange-500/45 rounded-xl px-3.5 py-2 font-black text-sm text-orange-400 shrink-0"
               >
-                <Flame className="w-4 h-4 fill-orange-500 text-orange-500 animate-[pulse_1.5s_infinite]" />
+                <Flame className="w-5 h-5 fill-orange-500 text-orange-500 animate-[pulse_1.5s_infinite]" />
                 <span>🔥 {streak} 連勝</span>
               </motion.div>
             )}
 
             {/* Score Box */}
-            <div className="bg-gray-950 border border-white/10 rounded-xl px-4 py-1.5 text-center min-w-[70px] shadow-lg">
-              <div className="text-[9px] font-black uppercase text-gray-500 tracking-wider leading-none mb-1">
+            <div className="bg-gray-950 border border-white/10 rounded-xl px-4 py-2 text-center min-w-[85px] shadow-lg">
+              <div className="text-xs font-black uppercase text-gray-400 tracking-wider leading-none mb-1">
                 SCORE
               </div>
-              <div className="font-ops text-xl font-black text-yellow-400 leading-none">
+              <div className="font-ops text-2xl font-black text-yellow-400 leading-none">
                 {score}
               </div>
             </div>
@@ -213,7 +214,7 @@ export default function QuestionScreen({
               className="h-full rounded-full"
               style={{
                 width: `${progressPercent}%`,
-                backgroundColor: chapter.color,
+                backgroundColor: activeCh.color,
               }}
             />
           </div>
@@ -228,63 +229,63 @@ export default function QuestionScreen({
             {/* Large high-contrast Papercraft illustration representing situation scene directly */}
             <div className="w-full md:w-5/12 aspect-[16/11] sm:aspect-[16/10] md:aspect-square rounded-2xl overflow-hidden border border-white/10 shrink-0 shadow-[0_12px_35px_rgba(0,0,0,0.6)] bg-gray-950/80 relative group">
               <img
-                src={getQuestionImage(chapter.id, qIdx, q)}
-                alt={`${chapter.titleZh}情境`}
+                src={getQuestionImage(activeCh.id, qIdx, q)}
+                alt={`${activeCh.titleZh}情境`}
                 className="w-full h-full object-cover select-none transition-transform duration-700 group-hover:scale-105"
                 referrerPolicy="no-referrer"
               />
               <div 
                 className="absolute inset-0 pointer-events-none mix-blend-color-dodge opacity-20"
                 style={{
-                  backgroundImage: `radial-gradient(circle at 50% 50%, ${chapter.color}, transparent 80%)`
+                  backgroundImage: `radial-gradient(circle at 50% 50%, ${activeCh.color}, transparent 80%)`
                 }}
               />
               <div className="absolute left-3 bottom-3 bg-black/70 border border-white/10 rounded-lg px-2.5 py-1 text-xs font-black flex items-center gap-1.5 backdrop-blur-md select-none">
-                <BookOpen className="w-3.5 h-3.5" style={{ color: chapter.color }} />
-                <span style={{ color: chapter.color }}>{chapter.emoji} 災害現場模擬</span>
+                <BookOpen className="w-3.5 h-3.5" style={{ color: activeCh.color }} />
+                <span style={{ color: activeCh.color }}>{activeCh.emoji} 災害現場模擬</span>
               </div>
             </div>
 
             {/* Question Text block & Answers block */}
             <div className="flex-1 w-full flex flex-col justify-between min-h-full">
-              <div className="mb-4">
+              <div className="mb-6">
                 {/* Situation Label */}
                 <span
-                  className="inline-flex items-center px-2.5 py-1 rounded-md text-[10px] font-black uppercase tracking-widest border mb-3 select-none"
+                  className="inline-flex items-center px-4 py-2 rounded-xl text-xs sm:text-sm md:text-base font-black uppercase tracking-wider border-2 mb-4 select-none shadow-[0_4px_12px_rgba(0,0,0,0.3)]"
                   style={{
-                    borderColor: `${chapter.color}35`,
-                    color: chapter.color,
-                    backgroundColor: chapter.glow,
+                    borderColor: `${activeCh.color}70`,
+                    color: activeCh.color,
+                    backgroundColor: activeCh.glow,
                   }}
                 >
-                  情境探討 ‧ {q.scenario}
+                  🎯 題目分類 ‧ {q.scenario}
                 </span>
 
                 {/* Highly Prominent, Extremely clear Question Text */}
-                <h2 className="text-xl sm:text-2xl md:text-3xl font-black leading-snug tracking-wide text-gray-100 font-sans">
+                <h2 className="text-2xl sm:text-3xl md:text-4xl font-black leading-snug tracking-wide text-white font-sans drop-shadow-md">
                   {q.q}
                 </h2>
               </div>
 
               {/* Answer Options Grid - Spacious & highly touch target compliant */}
-              <div className="flex flex-col gap-2.5 sm:gap-3.5">
+              <div className="flex flex-col gap-3.5 sm:gap-4.5">
                 {q.opts.map((option, idx) => {
                   return (
                     <motion.button
                       key={idx}
                       disabled={answered}
                       onClick={() => onPickOption(idx)}
-                      whileHover={{ scale: 1.01, x: 4 }}
+                      whileHover={{ scale: 1.01, x: 6 }}
                       whileTap={{ scale: 0.99 }}
-                      className="w-full flex items-center gap-4 px-4 py-3.5 sm:py-4.5 border rounded-xl text-left font-bold text-sm sm:text-base transition-all duration-200 border-white/5 hover:border-white/20 bg-white/5 hover:bg-white/10 cursor-pointer text-gray-200"
+                      className="w-full flex items-center gap-4 px-5 py-4 sm:py-5.5 border-2 rounded-xl text-left font-black text-base sm:text-lg md:text-xl transition-all duration-200 border-white/10 hover:border-white/25 bg-white/5 hover:bg-white/12 cursor-pointer text-gray-100"
                     >
                       {/* Stylized Option Identifier box */}
                       <div
-                        className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl flex items-center justify-center font-ops text-sm sm:text-base font-black shrink-0 transition-colors bg-white/10 text-gray-300"
+                        className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center font-ops text-base sm:text-lg md:text-xl font-black shrink-0 transition-colors bg-white/15 text-white shadow-inner"
                       >
                         {idx + 1}
                       </div>
-                      <div className="leading-snug flex-1 pr-2 font-medium">
+                      <div className="leading-snug flex-1 pr-2 font-black">
                         {option}
                       </div>
                     </motion.button>
@@ -347,30 +348,40 @@ export default function QuestionScreen({
               </div>
 
               {/* High fidelity inline status & score banner with situational image stamp */}
-              <div className="flex flex-row items-center justify-between gap-4 w-full bg-gray-950/40 border border-white/5 p-3 rounded-xl text-left">
-                <div className="flex flex-col gap-1.5 flex-1 min-w-0">
+              <div 
+                className={`flex flex-row items-center justify-between gap-4 w-full p-4 rounded-xl text-left border-2 shadow-2xl transition-all duration-300 ${
+                  isUserCorrect 
+                    ? "bg-emerald-950/90 border-emerald-500 text-emerald-100 shadow-[0_0_20px_rgba(16,185,129,0.35)]" 
+                    : "bg-red-950/90 border-red-500 text-red-100 shadow-[0_0_20px_rgba(239,68,68,0.35)]"
+                }`}
+              >
+                <div className="flex flex-col gap-2 flex-1 min-w-0">
                   {isUserCorrect ? (
-                    <div className="flex items-center gap-2 text-emerald-400">
-                      <CheckCircle2 className="w-5 h-5 shrink-0" />
-                      <span className="font-ops text-sm font-black leading-none tracking-wide">防護判斷正確！ 🌟</span>
+                    <div className="flex items-center gap-3 text-emerald-400">
+                      <CheckCircle2 className="w-8 h-8 shrink-0 text-emerald-400 animate-bounce" />
+                      <span className="font-ops text-xl sm:text-2xl md:text-3xl font-black tracking-wider drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]">
+                        防護判斷正確！ 🎉
+                      </span>
                     </div>
                   ) : (
-                    <div className="flex items-center gap-2 text-red-400">
-                      <XCircle className="w-5 h-5 shrink-0" />
-                      <span className="font-ops text-sm font-black leading-none tracking-wide">觀念需要修正！</span>
+                    <div className="flex items-center gap-3 text-red-400">
+                      <XCircle className="w-8 h-8 shrink-0 text-red-400 animate-pulse" />
+                      <span className="font-ops text-xl sm:text-2xl md:text-3xl font-black tracking-wider drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]">
+                        觀念需要修正！ ❌
+                      </span>
                     </div>
                   )}
 
                   {/* Score badge details inside */}
-                  <div className="flex items-center gap-1.5 text-xs text-gray-400 font-semibold">
-                    <Trophy className="w-3.5 h-3.5 text-yellow-500 shrink-0" />
-                    <span>本題得分：</span>
-                    <span className={`font-black ${isUserCorrect ? 'text-yellow-400' : 'text-gray-500'}`}>
+                  <div className="flex items-center gap-2.5 text-sm sm:text-base text-gray-200 font-extrabold">
+                    <Trophy className="w-5 h-5 text-yellow-400 shrink-0" />
+                    <span>獲得積分：</span>
+                    <span className={`font-black text-base sm:text-lg ${isUserCorrect ? 'text-yellow-400 animate-pulse' : 'text-gray-400'}`}>
                       {isUserCorrect ? `+${earnedPoints} FP` : "±0 PT"}
                     </span>
                     {streak >= 2 && isUserCorrect && (
-                      <span className="text-orange-400 font-extrabold text-[10px]">
-                        （🔥 {streak}連勝加成）
+                      <span className="text-orange-400 font-black bg-orange-500/15 px-2 py-0.5 rounded text-xs sm:text-sm">
+                        🔥 連勝加成中 ({streak}連勝)
                       </span>
                     )}
                   </div>
@@ -378,64 +389,95 @@ export default function QuestionScreen({
 
                 {/* Question-aligned illustration thumbnail stamp */}
                 <div 
-                  className="w-12 h-12 rounded-xl overflow-hidden border shadow-md bg-gray-950 flex-shrink-0 relative group animate-pulse"
-                  style={{ borderColor: chapter.color }}
+                  className="w-16 h-16 rounded-xl overflow-hidden border-2 shadow-lg bg-gray-950 flex-shrink-0 relative group animate-pulse"
+                  style={{ borderColor: activeCh.color }}
                 >
                   <img
-                    src={getQuestionImage(chapter.id, qIdx, q)}
-                    alt={chapter.title}
+                    src={getQuestionImage(activeCh.id, qIdx, q)}
+                    alt={activeCh.title}
                     className="w-full h-full object-cover select-none"
                     referrerPolicy="no-referrer"
                   />
-                  <div className="absolute right-1 bottom-1 bg-black/60 rounded px-1 py-[0.5px] text-[8px] text-white leading-none">
-                    {chapter.emoji}
+                  <div className="absolute right-1 bottom-1 bg-black/60 rounded px-1.5 py-[1px] text-[11px] text-white leading-none font-bold">
+                    {activeCh.emoji}
                   </div>
                 </div>
               </div>
 
               {/* Slogan */}
               <div 
-                className="font-ops text-xs sm:text-sm font-black tracking-widest py-1 px-4 rounded-lg border w-fit mx-auto"
+                className="font-ops text-sm sm:text-base md:text-lg font-black tracking-widest py-1.5 px-6 rounded-xl border-2 w-fit mx-auto"
                 style={{
-                  borderColor: `${chapter.color}40`,
-                  color: chapter.color,
-                  backgroundColor: chapter.glow,
+                  borderColor: `${activeCh.color}60`,
+                  color: activeCh.color,
+                  backgroundColor: activeCh.glow,
                 }}
               >
                 【 {q.slogan} 】
               </div>
 
               {/* High-visibility QA recap details */}
-              <div className="text-left w-full bg-gray-950/60 border border-white/5 rounded-xl p-3 text-xs sm:text-sm">
-                <div className="text-gray-400 font-medium mb-1 flex items-center gap-1.5">
-                  <GraduationCap className="w-4 h-4 text-blue-400 shrink-0" />
-                  <span className="line-clamp-1">問題：{q.q}</span>
+              <div className="text-left w-full bg-gray-950/90 border-2 border-white/10 rounded-2xl p-4 sm:p-6 flex flex-col gap-3.5 shadow-inner">
+                {/* Question header */}
+                <div className="flex items-start gap-2.5 border-b border-white/5 pb-3">
+                  <GraduationCap className="w-6 h-6 text-cyan-400 shrink-0 mt-0.5" />
+                  <div>
+                    <span className="text-xs text-cyan-400 font-black tracking-widest uppercase block mb-0.5">QUESTION / 題目情境</span>
+                    <span className="text-sm sm:text-base text-gray-100 font-extrabold leading-relaxed block">{q.q}</span>
+                  </div>
                 </div>
-                <div className="text-emerald-300 font-extrabold flex items-center gap-1.5 mt-1 border-t border-white/5 pt-1">
-                  <ShieldCheck className="w-4 h-4 text-emerald-400 shrink-0" />
-                  <span className="line-clamp-1">正解：{q.opts[q.ans]}</span>
+
+                {/* Highly clear correct answer option with number + text */}
+                <div className="bg-emerald-500/10 border-2 border-emerald-500/45 p-4 rounded-xl flex items-center gap-4">
+                  <div className="w-12 h-12 bg-emerald-500 text-black rounded-xl font-ops font-black text-xl sm:text-2xl flex items-center justify-center shrink-0 shadow-lg select-none">
+                    {q.ans + 1}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <span className="text-xs text-emerald-400 font-black tracking-widest uppercase block mb-1">
+                      CORRECT ANSWER / 正確答案選項
+                    </span>
+                    <span className="text-base sm:text-lg md:text-xl text-emerald-200 font-black leading-snug block">
+                      {q.opts[q.ans]}
+                    </span>
+                  </div>
                 </div>
+
+                {/* If wrong, user choice comparison */}
                 {!isUserCorrect && (
-                  <div className="text-red-300 font-bold flex items-center gap-1.5 mt-0.5">
-                    <span className="w-4 text-center text-xs shrink-0">❌</span>
-                    <span className="line-clamp-1">您選：{q.opts[selectedOption ?? 0]}</span>
+                  <div className="bg-red-500/10 border border-red-500/30 p-4 rounded-xl flex items-center gap-4">
+                    <div className="w-12 h-12 bg-red-500 text-white rounded-xl font-ops font-black text-xl sm:text-2xl flex items-center justify-center shrink-0 shadow-lg select-none">
+                      {selectedOption !== null ? selectedOption + 1 : "?"}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <span className="text-xs text-red-500 font-black tracking-widest uppercase block mb-1">
+                        YOUR CHOICE / 您的錯誤選擇
+                      </span>
+                      <span className="text-sm sm:text-base md:text-lg text-red-100 font-extrabold leading-snug block">
+                        {selectedOption !== null ? q.opts[selectedOption] : "未選擇"}
+                      </span>
+                    </div>
                   </div>
                 )}
               </div>
 
               {/* Explanatory description */}
-              <p className="text-gray-300 text-xs sm:text-sm font-medium leading-relaxed max-w-lg mx-auto pl-1">
-                💡 {q.exp}
-              </p>
+              <div className="text-left w-full bg-slate-900/60 border border-white/10 p-4 sm:p-5 rounded-xl shadow-md">
+                <span className="text-xs sm:text-sm text-blue-400 font-black tracking-widest uppercase block mb-1.5 flex items-center gap-1.5 select-none">
+                  💡 防災必修課 ‧ 核心觀念解析
+                </span>
+                <p className="text-gray-200 text-sm sm:text-base md:text-lg font-bold leading-relaxed whitespace-pre-line pl-1 border-l-2 border-blue-500/40">
+                  {q.exp}
+                </p>
+              </div>
 
               {/* Bottom Next Question CTA triggers */}
-              <div className="w-full pt-1">
+              <div className="w-full pt-2">
                 <button
                   onClick={onNextQuestion}
-                  className="w-full inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl text-sm font-black text-white bg-gradient-to-r from-orange-500 to-red-600 shadow-[0_4px_16px_rgba(249,115,22,0.35)] hover:scale-[1.01] active:scale-[0.99] transition-all cursor-pointer border border-orange-400"
+                  className="w-full inline-flex items-center justify-center gap-2 px-6 py-4 rounded-xl text-base sm:text-lg font-black text-white bg-gradient-to-r from-orange-500 to-red-600 shadow-[0_4px_20px_rgba(249,115,22,0.45)] hover:scale-[1.01] active:scale-[0.99] transition-all cursor-pointer border border-orange-400"
                 >
-                  <span>{qIdx + 1 >= total ? "進入關卡成果結算" : "理解了，下一題"}</span>
-                  <ArrowRight className="w-4 h-4 animate-bounce" />
+                  <span>{qIdx + 1 >= total ? "進入關卡成果結算 🏁" : "理解了，下一題 🚀"}</span>
+                  <ArrowRight className="w-5 h-5 animate-bounce" />
                 </button>
               </div>
 

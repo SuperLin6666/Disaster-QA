@@ -10,6 +10,7 @@ export interface Question {
   ans: number;
   slogan: string;
   exp: string;
+  chapter?: Chapter;
 }
 
 export interface Chapter {

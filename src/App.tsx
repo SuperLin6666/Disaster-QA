@@ -5,7 +5,7 @@
 
 import { useState, useEffect } from "react";
 import { AnimatePresence } from "motion/react";
-import { CHAPTERS, prepareChapterQuestions } from "./data";
+import { CHAPTERS, prepareChapterQuestions, prepareMixedQuestions } from "./data";
 import { ScreenType, GameState, ChapterResult } from "./types";
 
 import BackgroundCanvas from "./components/BackgroundCanvas";
@@ -16,6 +16,17 @@ import LevelCompleteScreen from "./components/LevelCompleteScreen";
 import FinalScreen from "./components/FinalScreen";
 
 const LOCAL_STORAGE_KEY = "disaster_survival_quiz_state_v1";
+
+const MIXED_CHAPTER = {
+  id: "mixed_pk",
+  title: "Mixed Challenge",
+  titleZh: "隨機綜合挑戰",
+  emoji: "🏆",
+  color: "#f59e0b",
+  glow: "rgba(245,158,11,0.12)",
+  cls: "mixed",
+  questions: [],
+};
 
 const initialGameState: GameState = {
   score: 0,
@@ -70,8 +81,9 @@ export default function App() {
   };
 
   const handleSelectChapter = (chIndex: number) => {
-    const originalQuestions = CHAPTERS[chIndex].questions;
-    const shuffled = prepareChapterQuestions(originalQuestions);
+    const shuffled = chIndex === -1
+      ? prepareMixedQuestions()
+      : prepareChapterQuestions(CHAPTERS[chIndex].questions);
 
     const updated = {
       ...state,
@@ -95,7 +107,7 @@ export default function App() {
   const handlePickOption = (optionIdx: number) => {
     if (state.answered) return;
 
-    const currentChapter = CHAPTERS[state.chIdx];
+    const currentChapter = state.chIdx === -1 ? MIXED_CHAPTER : CHAPTERS[state.chIdx];
     const questionsList = state.activeQuestions || currentChapter.questions;
     const currentQuestion = questionsList[state.qIdx];
     const isCorrect = optionIdx === currentQuestion.ans;
@@ -132,7 +144,7 @@ export default function App() {
   };
 
   const handleNextQuestion = () => {
-    const currentChapter = CHAPTERS[state.chIdx];
+    const currentChapter = state.chIdx === -1 ? MIXED_CHAPTER : CHAPTERS[state.chIdx];
     const questionsList = state.activeQuestions || currentChapter.questions;
     const nextQIdx = state.qIdx + 1;
 
@@ -214,6 +226,7 @@ export default function App() {
               chapters={CHAPTERS}
               onStartQuiz={handleStartQuiz}
               onSelectChapter={handleSelectChapter}
+              onStartMixedChallenge={() => handleSelectChapter(-1)}
               totalScore={state.score}
               totalCorrect={totalCorrect}
               totalQuestions={totalQuestions}
@@ -239,7 +252,7 @@ export default function App() {
           {screen === "question" && (
             <QuestionScreen
               key="question-screen"
-              chapter={CHAPTERS[state.chIdx]}
+              chapter={state.chIdx === -1 ? MIXED_CHAPTER : CHAPTERS[state.chIdx]}
               activeQuestions={state.activeQuestions}
               qIdx={state.qIdx}
               streak={state.streak}
@@ -248,19 +261,19 @@ export default function App() {
               selectedOption={state.selectedOption}
               onPickOption={handlePickOption}
               onNextQuestion={handleNextQuestion}
-              onExit={() => setScreen("chapters")}
+              onExit={() => setScreen(state.chIdx === -1 ? "home" : "chapters")}
             />
           )}
 
           {screen === "levelComplete" && (
             <LevelCompleteScreen
               key="complete-screen"
-              chapter={CHAPTERS[state.chIdx]}
+              chapter={state.chIdx === -1 ? MIXED_CHAPTER : CHAPTERS[state.chIdx]}
               correctCount={state.chCorrect}
               wrongCount={state.chWrong}
               currentScore={state.score}
               nextChapter={
-                state.chIdx + 1 < CHAPTERS.length ? CHAPTERS[state.chIdx + 1] : null
+                state.chIdx !== -1 && state.chIdx + 1 < CHAPTERS.length ? CHAPTERS[state.chIdx + 1] : null
               }
               onGoToChapters={() => setScreen("chapters")}
               onStartNextChapter={handleStartNextChapter}

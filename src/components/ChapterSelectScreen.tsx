@@ -65,41 +65,41 @@ export default function ChapterSelectScreen({
       transition={{ duration: 0.3 }}
       className="flex flex-col items-center justify-start min-h-screen sm:h-screen w-full max-w-2xl mx-auto px-4 py-4 relative z-10 overflow-y-auto"
     >
-      <header className="text-center mb-4 shrink-0">
-        <h2 className="font-ops text-3xl sm:text-4xl font-black tracking-wider text-white mb-1">
+      <header className="text-center mb-6 shrink-0">
+        <h2 className="font-ops text-4xl sm:text-5xl font-black tracking-wider text-white mb-2">
           選擇挑戰關卡
         </h2>
-        <p className="text-gray-400 text-xs font-semibold max-w-md mx-auto">
+        <p className="text-gray-300 text-sm sm:text-lg font-bold max-w-lg mx-auto leading-relaxed">
           共有 4 大災害情境，完成全部關卡可解鎖災害防禦大師成就！
         </p>
       </header>
 
       {/* Scoreboard Metrics */}
-      <div className="flex items-center w-full max-w-xl bg-gray-900/60 border border-white/5 rounded-xl overflow-hidden mb-4 shadow-xl backdrop-blur-md shrink-0">
-        <div className="flex-1 px-4 py-2.5 text-center border-r border-white/5">
-          <div className="flex items-center justify-center gap-1 text-[9px] font-black uppercase tracking-widest text-gray-500 mb-0.5">
-            <Trophy className="w-3 h-3 text-orange-400" />
+      <div className="flex items-center w-full max-w-xl bg-gray-900/60 border border-white/5 rounded-xl overflow-hidden mb-6 shadow-xl backdrop-blur-md shrink-0">
+        <div className="flex-1 px-4 py-3 text-center border-r border-white/5">
+          <div className="flex items-center justify-center gap-1.5 text-xs sm:text-sm font-black uppercase tracking-widest text-gray-400 mb-0.5">
+            <Trophy className="w-3.5 h-3.5 text-orange-400" />
             總得分
           </div>
-          <div className="font-ops text-xl sm:text-2xl font-black text-orange-400">
+          <div className="font-ops text-2xl sm:text-3xl font-black text-orange-400">
             {totalScore}
           </div>
         </div>
-        <div className="flex-1 px-4 py-2.5 text-center border-r border-white/5">
-          <div className="flex items-center justify-center gap-1 text-[9px] font-black uppercase tracking-widest text-gray-500 mb-0.5">
-            <CheckCircle className="w-3 h-3 text-green-400" />
+        <div className="flex-1 px-4 py-3 text-center border-r border-white/5">
+          <div className="flex items-center justify-center gap-1.5 text-xs sm:text-sm font-black uppercase tracking-widest text-gray-400 mb-0.5">
+            <CheckCircle className="w-3.5 h-3.5 text-green-400" />
             累計答對
           </div>
-          <div className="font-ops text-xl sm:text-2xl font-black text-green-400">
+          <div className="font-ops text-2xl sm:text-3xl font-black text-green-400">
             {totalCorrect}
           </div>
         </div>
-        <div className="flex-1 px-4 py-2.5 text-center">
-          <div className="flex items-center justify-center gap-1 text-[9px] font-black uppercase tracking-widest text-gray-500 mb-0.5">
-            <Flame className="w-3 h-3 text-cyan-400 animate-pulse" />
+        <div className="flex-1 px-4 py-3 text-center">
+          <div className="flex items-center justify-center gap-1.5 text-xs sm:text-sm font-black uppercase tracking-widest text-gray-400 mb-0.5">
+            <Flame className="w-3.5 h-3.5 text-cyan-400 animate-pulse" />
             當前連勝
           </div>
-          <div className="font-ops text-xl sm:text-2xl font-black text-cyan-400">
+          <div className="font-ops text-2xl sm:text-3xl font-black text-cyan-400">
             {streak}
           </div>
         </div>
@@ -162,28 +162,28 @@ export default function ChapterSelectScreen({
                   </div>
                 </div>
                 <h3
-                  className="font-ops text-base sm:text-lg font-bold tracking-wider mb-0.5"
+                  className="font-ops text-lg sm:text-2xl font-black tracking-wider mb-1"
                   style={{ color: ch.color }}
                 >
                   {ch.title}
                 </h3>
-                <p className="text-gray-400 text-[10px] font-black tracking-wider uppercase mb-1 sm:mb-2">
+                <p className="text-gray-200 text-sm sm:text-lg font-black tracking-wider uppercase mb-1.5 sm:mb-2 bg-white/5 px-2 py-0.5 rounded">
                   {ch.titleZh}
                 </p>
-                <p className="text-[10px] font-bold text-gray-500">
+                <p className="text-xs sm:text-sm font-bold text-gray-400">
                   {ch.questions.length} 道實戰情境題
                 </p>
               </div>
 
               {/* Status / Achievements inside Card */}
-              <div className="relative z-10 w-full mt-2 pt-1.5 border-t border-white/5 flex flex-col items-center">
-                <div className="text-xs tracking-[0.15em] mb-1">{stars}</div>
+              <div className="relative z-10 w-full mt-3 pt-2.5 border-t border-white/10 flex flex-col items-center">
+                <div className="text-sm sm:text-base tracking-[0.15em] mb-1.5">{stars}</div>
                 {isDone && (
                   <p
-                    className="text-[10px] font-black tracking-wide"
+                    className="text-xs sm:text-sm md:text-base font-black tracking-wide"
                     style={{ color: ch.color }}
                   >
-                    分數：{r.correct} / {r.total} 答對
+                    成績：{r.correct} / {r.total} 答對
                   </p>
                 )}
               </div>

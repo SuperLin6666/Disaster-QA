@@ -17,6 +17,7 @@ const CHAPTER_IMAGES: Record<string, string> = {
   typhoon: tyCardUrl,
   fire: fiCardUrl,
   flood: flCardUrl,
+  mixed_pk: flCardUrl,
 };
 
 interface LevelCompleteScreenProps {
@@ -41,7 +42,7 @@ export default function LevelCompleteScreen({
   onStartNextChapter,
   onShowFinalResults,
 }: LevelCompleteScreenProps) {
-  const total = chapter.questions.length;
+  const total = chapter.questions.length || (correctCount + wrongCount) || 4;
   const ratio = correctCount / total;
 
   // Decide Medal and Status Title

@@ -14,6 +14,7 @@ interface HomeScreenProps {
   chapters: Chapter[];
   onStartQuiz: () => void;
   onSelectChapter: (idx: number) => void;
+  onStartMixedChallenge: () => void;
   totalScore: number;
   totalCorrect: number;
   totalQuestions: number;
@@ -23,6 +24,7 @@ export default function HomeScreen({
   chapters,
   onStartQuiz,
   onSelectChapter,
+  onStartMixedChallenge,
   totalScore,
   totalCorrect,
   totalQuestions,
@@ -50,6 +52,11 @@ export default function HomeScreen({
   const handleStartActiveQuiz = () => {
     requestFullscreenSafe();
     onStartQuiz();
+  };
+
+  const handleStartMixedChallenge = () => {
+    requestFullscreenSafe();
+    onStartMixedChallenge();
   };
 
   const handleSelectActiveChapter = (idx: number) => {
@@ -91,9 +98,9 @@ export default function HomeScreen({
           initial={{ scale: 0.9, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           transition={{ delay: 0.1 }}
-          className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-orange-500/35 bg-orange-500/10 text-orange-500 font-extrabold text-[10px] tracking-[2.5px] uppercase mb-4 sm:mb-5"
+          className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-orange-500/35 bg-orange-500/10 text-orange-500 font-extrabold text-xs sm:text-sm tracking-[2.5px] uppercase mb-4 sm:mb-5"
         >
-          <span className="w-1.5 h-1.5 bg-orange-500 rounded-full animate-ping" />
+          <span className="w-2 h-2 bg-orange-500 rounded-full animate-ping" />
           防災演練系統 READY
         </motion.div>
 
@@ -127,23 +134,23 @@ export default function HomeScreen({
         </motion.div>
 
         {/* Description */}
-        <p className="text-gray-400 text-xs sm:text-sm font-semibold leading-relaxed max-w-md mb-4 font-sans">
+        <p className="text-gray-200 text-sm sm:text-base md:text-lg lg:text-xl font-bold leading-relaxed max-w-xl mb-5 font-sans">
           應對大自然危機，挑戰 4 種極端災害、20 道情境題目。
           <br />
           學習黃金防護觀念，與時間賽跑，成為真正的災害防護專家！
         </p>
 
         {/* Category Pills */}
-        <div className="flex flex-col items-center gap-1.5 mb-5 sm:mb-6">
-          <span className="text-[10px] text-gray-500 font-bold uppercase tracking-wider">
-            👉 點擊按鈕，直接開始指定關卡：
+        <div className="flex flex-col items-center gap-2 mb-6 sm:mb-8">
+          <span className="text-xs sm:text-sm text-gray-400 font-extrabold uppercase tracking-wider">
+            👉 點擊按鈕，直接開始指定主題關卡：
           </span>
-          <div className="flex flex-wrap gap-2 justify-center max-w-sm">
+          <div className="flex flex-wrap gap-2.5 justify-center max-w-lg">
             {chapters.map((ch, idx) => (
               <button
                 key={ch.id}
                 onClick={() => handleSelectActiveChapter(idx)}
-                className="px-3.5 py-1.5 rounded-lg text-xs font-extrabold border bg-gray-950/40 hover:bg-white/5 hover:scale-105 active:scale-95 transition-all cursor-pointer whitespace-nowrap"
+                className="px-4.5 py-2.5 rounded-xl text-xs sm:text-sm md:text-base font-black border-2 bg-gray-950/65 hover:bg-white/10 hover:scale-105 active:scale-95 transition-all cursor-pointer whitespace-nowrap shadow-md"
                 style={{ borderColor: ch.color, color: ch.color }}
               >
                 {ch.emoji} {ch.titleZh}
@@ -153,19 +160,26 @@ export default function HomeScreen({
         </div>
 
         {/* Action Button & Fullscreen Controls */}
-        <div className="flex flex-col sm:flex-row items-center gap-3 w-full justify-center">
+        <div className="flex flex-col sm:flex-row items-center gap-3 w-full justify-center max-w-lg">
           <button
             id="start-challenge-btn"
-            onClick={handleStartActiveQuiz}
-            className="group relative inline-flex items-center gap-2.5 px-8 py-3.5 rounded-xl font-extrabold text-base text-white bg-gradient-to-r from-orange-500 to-red-600 shadow-[0_6px_25px_rgba(249,115,22,0.35)] hover:shadow-[0_12px_35px_rgba(249,115,22,0.5)] active:scale-95 transition-all duration-200 cursor-pointer"
+            onClick={handleStartMixedChallenge}
+            className="group relative inline-flex items-center gap-2 px-6 py-3.5 rounded-xl font-extrabold text-base text-white bg-gradient-to-r from-orange-500 to-red-650 shadow-[0_6px_25px_rgba(249,115,22,0.35)] hover:shadow-[0_12px_35px_rgba(249,115,22,0.5)] active:scale-95 transition-all duration-200 cursor-pointer w-full sm:w-auto justify-center"
           >
             <Play className="w-4 h-4 fill-white group-hover:scale-110 transition-transform" />
-            ⚡ 立即開始安全演練
+            ⚡ 立即開始安全演練 (隨機綜合)
+          </button>
+
+          <button
+            onClick={handleStartActiveQuiz}
+            className="group relative inline-flex items-center gap-2 px-6 py-3.5 rounded-xl font-bold text-base text-gray-200 border border-white/10 hover:border-white/20 bg-white/5 hover:bg-white/10 active:scale-95 transition-all duration-200 cursor-pointer w-full sm:w-auto justify-center"
+          >
+            📂 選擇主題關卡
           </button>
 
           <button
             onClick={handleToggleFullscreen}
-            className="inline-flex items-center gap-2 px-5 py-3.5 rounded-xl text-sm font-bold text-gray-400 border border-white/5 hover:border-white/10 hover:text-white hover:bg-white/5 transition-all cursor-pointer bg-gray-900/40"
+            className="inline-flex items-center gap-2 px-4 py-3.5 rounded-xl text-sm font-bold text-gray-400 border border-white/5 hover:border-white/10 hover:text-white hover:bg-white/5 transition-all cursor-pointer bg-gray-900/40 w-full sm:w-auto justify-center"
           >
             {isFullscreen ? (
               <>
@@ -175,7 +189,7 @@ export default function HomeScreen({
             ) : (
               <>
                 <Maximize2 className="w-4 h-4 text-orange-400" />
-                <span>🖥️ 全螢幕瀏覽</span>
+                <span>🖥️ 全螢幕</span>
               </>
             )}
           </button>
