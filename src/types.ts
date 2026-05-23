@@ -41,6 +41,7 @@ export interface GameState {
   selectedOption: number | null;
   results: Record<string, ChapterResult>;
   done: string[];
+  activeQuestions?: Question[];
 }
 
 export type ScreenType = "home" | "chapters" | "question" | "levelComplete" | "final";

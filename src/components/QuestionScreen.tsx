@@ -17,7 +17,7 @@ import {
   GraduationCap,
   ShieldCheck
 } from "lucide-react";
-import { Chapter } from "../types";
+import { Chapter, Question } from "../types";
 
 import eqCardUrl from "../assets/images/eq_ill_card_1779519005358.png";
 import tyCardUrl from "../assets/images/ty_ill_card_1779519025600.png";
@@ -27,37 +27,79 @@ import aidCardUrl from "../assets/images/aid_ill_card_1779520581198.png";
 import radioCardUrl from "../assets/images/radio_ill_card_1779520600965.png";
 import escapeCardUrl from "../assets/images/escape_ill_card_1779520620217.png";
 
-const getQuestionImage = (chapterId: string, qIdx: number): string => {
-  if (chapterId === "earthquake") {
-    if (qIdx === 0) return eqCardUrl;
-    if (qIdx === 1) return flCardUrl; // Thick boots for floor glass
-    if (qIdx === 2 || qIdx === 3) return aidCardUrl; // Wound first-aid / water supply
-    return radioCardUrl; // Night beacon distress whistling
+const getQuestionImage = (chapterId: string, qIdx: number, qObj?: Question): string => {
+  if (!qObj) {
+    if (chapterId === "earthquake") {
+      if (qIdx === 0 || qIdx === 1) return eqCardUrl;
+      if (qIdx === 2 || qIdx === 3) return aidCardUrl;
+      return radioCardUrl;
+    }
+    if (chapterId === "typhoon") {
+      if (qIdx === 0) return tyCardUrl;
+      if (qIdx === 1) return radioCardUrl;
+      if (qIdx === 2) return flCardUrl;
+      return aidCardUrl;
+    }
+    if (chapterId === "fire") {
+      if (qIdx === 0) return escapeCardUrl;
+      if (qIdx === 1) return fiCardUrl;
+      if (qIdx === 2) return radioCardUrl;
+      if (qIdx === 3) return aidCardUrl;
+      if (qIdx === 4) return fiCardUrl;
+      return aidCardUrl;
+    }
+    if (chapterId === "flood") {
+      if (qIdx === 0 || qIdx === 1 || qIdx === 2) return flCardUrl;
+      return aidCardUrl;
+    }
+    return eqCardUrl;
   }
-  if (chapterId === "typhoon") {
-    if (qIdx === 0) return tyCardUrl;
-    if (qIdx === 1) return radioCardUrl;
-    if (qIdx === 2) return flCardUrl;
+
+  const text = (qObj.q + " " + qObj.scenario).toLowerCase();
+
+  // 1. Fire-related
+  if (text.includes("滅火") || text.includes("電線走火") || text.includes("119") || text.includes("報案") || text.includes("住警器") || text.includes("火災")) {
+    if (text.includes("濃煙")) return escapeCardUrl;
+    return fiCardUrl;
+  }
+
+  // 2. Escape, Evacuation
+  if (text.includes("避難姿勢") || text.includes("低姿勢") || text.includes("逃生") || text.includes("撤離") || text.includes("離開室內")) {
+    return escapeCardUrl;
+  }
+
+  // 3. Aid / Medical / Survival / CPR / Wound Care / Food Hygiene
+  if (text.includes("避難包") || text.includes("急救") || text.includes("噎住") || text.includes("cpr") || text.includes("割傷") || text.includes("出血") || text.includes("燙傷") || text.includes("清洗消毒") || text.includes("飲水") || text.includes("食物")) {
     return aidCardUrl;
   }
-  if (chapterId === "fire") {
-    if (qIdx === 0 || qIdx === 1) return escapeCardUrl;
-    if (qIdx === 2) return radioCardUrl;
-    if (qIdx === 3) return aidCardUrl;
-    if (qIdx === 4) return fiCardUrl;
-    return aidCardUrl;
+
+  // 4. Radio / Communication
+  if (text.includes("無線電") || text.includes("收音機") || text.includes("手電筒") || text.includes("通訊") || text.includes("1991") || text.includes("報平安")) {
+    return radioCardUrl;
   }
-  if (chapterId === "flood") {
-    if (qIdx === 0 || qIdx === 1) return flCardUrl;
-    if (qIdx === 2) return escapeCardUrl;
-    return aidCardUrl;
+
+  // 5. Flood / water wading / Landslides
+  if (text.includes("淹水") || text.includes("土石") || text.includes("山鳴") || text.includes("水流") || text.includes("涉水") || text.includes("積水") || text.includes("排水")) {
+    return flCardUrl;
   }
+
+  // 6. Typhoon (weather, storm, winds, glass taping)
+  if (text.includes("颱風") || text.includes("強風")) {
+    return tyCardUrl;
+  }
+
+  // 7. Earthquake
+  if (text.includes("地震") || text.includes("搖晃") || text.includes("震度") || text.includes("規模") || text.includes("家具")) {
+    return eqCardUrl;
+  }
+
   return eqCardUrl;
 };
 
 interface QuestionScreenProps {
   key?: string;
   chapter: Chapter;
+  activeQuestions?: Question[];
   qIdx: number;
   streak: number;
   score: number;
@@ -70,6 +112,7 @@ interface QuestionScreenProps {
 
 export default function QuestionScreen({
   chapter,
+  activeQuestions,
   qIdx,
   streak,
   score,
@@ -79,8 +122,9 @@ export default function QuestionScreen({
   onNextQuestion,
   onExit,
 }: QuestionScreenProps) {
-  const q = chapter.questions[qIdx];
-  const total = chapter.questions.length;
+  const questionsList = activeQuestions || chapter.questions;
+  const q = questionsList[qIdx];
+  const total = questionsList.length;
   const progressPercent = Math.round((qIdx / total) * 100);
 
   // Calculate potential scores or streak bonuses
@@ -184,7 +228,7 @@ export default function QuestionScreen({
             {/* Large high-contrast Papercraft illustration representing situation scene directly */}
             <div className="w-full md:w-5/12 aspect-[16/11] sm:aspect-[16/10] md:aspect-square rounded-2xl overflow-hidden border border-white/10 shrink-0 shadow-[0_12px_35px_rgba(0,0,0,0.6)] bg-gray-950/80 relative group">
               <img
-                src={getQuestionImage(chapter.id, qIdx)}
+                src={getQuestionImage(chapter.id, qIdx, q)}
                 alt={`${chapter.titleZh}情境`}
                 className="w-full h-full object-cover select-none transition-transform duration-700 group-hover:scale-105"
                 referrerPolicy="no-referrer"
@@ -338,7 +382,7 @@ export default function QuestionScreen({
                   style={{ borderColor: chapter.color }}
                 >
                   <img
-                    src={getQuestionImage(chapter.id, qIdx)}
+                    src={getQuestionImage(chapter.id, qIdx, q)}
                     alt={chapter.title}
                     className="w-full h-full object-cover select-none"
                     referrerPolicy="no-referrer"

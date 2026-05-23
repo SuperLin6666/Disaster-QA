@@ -5,7 +5,7 @@
 
 import { useState, useEffect } from "react";
 import { AnimatePresence } from "motion/react";
-import { CHAPTERS } from "./data";
+import { CHAPTERS, prepareChapterQuestions } from "./data";
 import { ScreenType, GameState, ChapterResult } from "./types";
 
 import BackgroundCanvas from "./components/BackgroundCanvas";
@@ -70,6 +70,9 @@ export default function App() {
   };
 
   const handleSelectChapter = (chIndex: number) => {
+    const originalQuestions = CHAPTERS[chIndex].questions;
+    const shuffled = prepareChapterQuestions(originalQuestions);
+
     const updated = {
       ...state,
       chIdx: chIndex,
@@ -78,8 +81,10 @@ export default function App() {
       chWrong: 0,
       answered: false,
       selectedOption: null,
+      activeQuestions: shuffled,
     };
     setState(updated);
+    saveStateToStorage(updated);
     setScreen("question");
   };
 
@@ -91,7 +96,8 @@ export default function App() {
     if (state.answered) return;
 
     const currentChapter = CHAPTERS[state.chIdx];
-    const currentQuestion = currentChapter.questions[state.qIdx];
+    const questionsList = state.activeQuestions || currentChapter.questions;
+    const currentQuestion = questionsList[state.qIdx];
     const isCorrect = optionIdx === currentQuestion.ans;
 
     let nextCorrectCount = state.chCorrect;
@@ -127,9 +133,10 @@ export default function App() {
 
   const handleNextQuestion = () => {
     const currentChapter = CHAPTERS[state.chIdx];
+    const questionsList = state.activeQuestions || currentChapter.questions;
     const nextQIdx = state.qIdx + 1;
 
-    if (nextQIdx >= currentChapter.questions.length) {
+    if (nextQIdx >= questionsList.length) {
       // Completed last question of the current chapter!
       const chapterId = currentChapter.id;
       const updatedDone = state.done.includes(chapterId)
@@ -140,7 +147,7 @@ export default function App() {
         correct: state.chCorrect,
         wrong: state.chWrong,
         pts: state.score,
-        total: currentChapter.questions.length,
+        total: questionsList.length,
       };
 
       const updatedResults = {
@@ -233,6 +240,7 @@ export default function App() {
             <QuestionScreen
               key="question-screen"
               chapter={CHAPTERS[state.chIdx]}
+              activeQuestions={state.activeQuestions}
               qIdx={state.qIdx}
               streak={state.streak}
               score={state.score}
