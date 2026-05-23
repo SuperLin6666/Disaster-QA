@@ -298,16 +298,9 @@ export default function QuestionScreen({
               <div className="mb-4">
                 {/* Situation Label & Timer */}
                 <div className="flex flex-wrap items-center justify-between gap-3 mb-3 select-none">
-                  <span
-                    className="inline-flex items-center px-3 py-1.5 rounded-xl text-xs sm:text-sm font-black uppercase tracking-wider border-2 select-none shadow-[0_4px_12px_rgba(0,0,0,0.3)]"
-                    style={{
-                      borderColor: `${activeCh.color}70`,
-                      color: activeCh.color,
-                      backgroundColor: activeCh.glow,
-                    }}
-                  >
-                    🎯 題目分類 ‧ {q.scenario}
-                  </span>
+                  <div className="text-xs text-gray-400 font-black tracking-wide">
+                    {activeCh.titleZh} ‧ 第 {qIdx + 1} 題 / 共 {questionsList.length} 題
+                  </div>
 
                   {/* Gigantic glowing countdown badge */}
                   <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl border-2 font-black text-xs sm:text-sm tracking-widest transition-all duration-300 ${
@@ -506,35 +499,6 @@ export default function QuestionScreen({
                     </span>
                   </div>
                 </div>
-
-                {/* If wrong, user choice comparison */}
-                {!isUserCorrect && (
-                  <div className="bg-red-500/10 border border-red-500/30 p-2.5 rounded-xl flex items-center gap-3">
-                    <div className="w-8 h-8 bg-red-500 text-white rounded-lg font-ops font-black text-sm sm:text-base flex items-center justify-center shrink-0 shadow-lg select-none">
-                      {selectedOption !== null && selectedOption >= 0 ? selectedOption + 1 : "⌛"}
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <span className="text-[10px] text-red-500 font-black tracking-widest uppercase block mb-0.5">
-                        YOUR CHOICE / 您的選擇
-                      </span>
-                      <span className="text-xs sm:text-sm md:text-base text-red-100 font-extrabold leading-snug block">
-                        {selectedOption !== null && selectedOption >= 0 
-                          ? q.opts[selectedOption] 
-                          : "答題超時未作答 (逾時)"}
-                      </span>
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              {/* Explanatory description */}
-              <div className="text-left w-full bg-slate-900/60 border border-white/10 p-3 sm:p-4 rounded-xl shadow-md">
-                <span className="text-[10px] sm:text-xs text-blue-400 font-black tracking-widest uppercase block mb-1 flex items-center gap-1 select-none">
-                  💡 防災必修課 ‧ 核心觀念解析
-                </span>
-                <p className="text-gray-200 text-xs sm:text-sm md:text-base font-bold leading-relaxed whitespace-pre-line pl-1 border-l-2 border-blue-500/40 max-h-[120px] overflow-y-auto pr-1 select-text scrollbar-thin">
-                  {q.exp}
-                </p>
               </div>
 
               {/* Bottom Next Question CTA triggers */}
