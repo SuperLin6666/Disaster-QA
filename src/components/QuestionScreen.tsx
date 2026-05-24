@@ -15,7 +15,9 @@ import {
   Trophy, 
   BookOpen, 
   GraduationCap,
-  ShieldCheck
+  ShieldCheck,
+  Play,
+  Pause
 } from "lucide-react";
 import { Chapter, Question } from "../types";
 import FullscreenButton from "./FullscreenButton";
@@ -97,6 +99,35 @@ const getQuestionImage = (chapterId: string, qIdx: number, qObj?: Question): str
   return eqCardUrl;
 };
 
+// Play a synthesized double buzz warning beep sequence when countdown reaches zero
+function playAlarmSound() {
+  try {
+    const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext;
+    if (!AudioContextClass) return;
+    const ctx = new AudioContextClass();
+    
+    const playBeep = (startTime: number, duration: number, frequency: number) => {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = "sawtooth";
+      osc.frequency.setValueAtTime(frequency, startTime);
+      gain.gain.setValueAtTime(0.3, startTime);
+      gain.gain.exponentialRampToValueAtTime(0.01, startTime + duration);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start(startTime);
+      osc.stop(startTime + duration);
+    };
+
+    const now = ctx.currentTime;
+    playBeep(now, 0.2, 580);
+    playBeep(now + 0.25, 0.2, 580);
+    playBeep(now + 0.5, 0.4, 780);
+  } catch (err) {
+    console.warn("Failed to play synthesized alarm audio:", err);
+  }
+}
+
 interface QuestionScreenProps {
   key?: string;
   chapter: Chapter;
@@ -131,14 +162,18 @@ export default function QuestionScreen({
 
   const [prevView, setPrevView] = useState({ qIdx, answered });
   const [timeLeft, setTimeLeft] = useState(answered ? 15 : 30);
+  const [isPaused, setIsPaused] = useState(false);
 
   if (prevView.qIdx !== qIdx || prevView.answered !== answered) {
     setPrevView({ qIdx, answered });
     setTimeLeft(answered ? 15 : 30);
+    setIsPaused(false);
   }
 
   // Handle ticking countdown
   useEffect(() => {
+    if (isPaused) return;
+
     const timer = setInterval(() => {
       setTimeLeft((prev) => {
         if (prev <= 1) {
@@ -150,11 +185,13 @@ export default function QuestionScreen({
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [qIdx, answered]);
+  }, [qIdx, answered, isPaused]);
 
   // Handle auto transitions when countdown reaches 0 safely within useEffect
   useEffect(() => {
     if (timeLeft === 0) {
+      playAlarmSound();
+
       if (!answered) {
         onPickOption(-1);
       } else {
@@ -263,7 +300,7 @@ export default function QuestionScreen({
             <div 
               className="h-full transition-all duration-1000 ease-linear"
               style={{
-                width: `${(timeLeft / 20) * 100}%`,
+                width: `${(timeLeft / (answered ? 15 : 30)) * 100}%`,
                 backgroundColor: timeLeft <= 5 ? "#ef4444" : activeCh.color,
                 boxShadow: timeLeft <= 5 ? "0 0 10px #ef4444" : `0 0 10px ${activeCh.color}`,
               }}
@@ -302,17 +339,41 @@ export default function QuestionScreen({
                     {activeCh.titleZh} ‧ 第 {qIdx + 1} 題 / 共 {questionsList.length} 題
                   </div>
 
-                  {/* Gigantic glowing countdown badge */}
-                  <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl border-2 font-black text-xs sm:text-sm tracking-widest transition-all duration-300 ${
-                    timeLeft <= 5 
-                      ? "bg-red-500/25 border-red-500 text-red-400 animate-pulse shadow-[0_0_15px_rgba(239,68,68,0.4)]" 
-                      : "bg-orange-500/10 border-orange-500/50 text-orange-400 shadow-[0_0_10px_rgba(249,115,22,0.15)]"
-                  }`}>
-                    <span className="relative flex h-2 w-2">
-                      <span className={`animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 ${timeLeft <= 5 ? 'bg-red-400' : 'bg-orange-400'}`}></span>
-                      <span className={`relative inline-flex rounded-full h-2 w-2 ${timeLeft <= 5 ? 'bg-red-500' : 'bg-orange-500'}`}></span>
-                    </span>
-                    <span>⏱️ 倒數 {timeLeft} 秒</span>
+                  {/* Host Pause/Resume Button and Gigantic glowing countdown badge */}
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <button
+                      onClick={() => setIsPaused(!isPaused)}
+                      className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-black transition-all border cursor-pointer select-none shadow-md ${
+                        isPaused
+                          ? "bg-emerald-500/20 border-emerald-500 text-emerald-400 font-bold"
+                          : "bg-gray-800 border-white/10 text-gray-300 hover:border-orange-500/50"
+                      }`}
+                      title={isPaused ? "點擊以繼續計時" : "主持人可在此暫停計時"}
+                    >
+                      {isPaused ? (
+                        <>
+                          <Play className="w-3 h-3 fill-emerald-400 text-emerald-400" />
+                          <span>繼續計時</span>
+                        </>
+                      ) : (
+                        <>
+                          <Pause className="w-3 h-3 fill-gray-300 text-gray-300" />
+                          <span>暫停計時</span>
+                        </>
+                      )}
+                    </button>
+
+                    <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl border-2 font-black text-xs sm:text-sm tracking-widest transition-all duration-300 ${
+                      timeLeft <= 5 
+                        ? "bg-red-500/25 border-red-500 text-red-400 animate-pulse shadow-[0_0_15px_rgba(239,68,68,0.4)]" 
+                        : "bg-orange-500/10 border-orange-500/50 text-orange-400 shadow-[0_0_10px_rgba(249,115,22,0.15)]"
+                    }`}>
+                      <span className="relative flex h-2 w-2">
+                        <span className={`animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 ${timeLeft <= 5 ? 'bg-red-400' : 'bg-orange-400'}`}></span>
+                        <span className={`relative inline-flex rounded-full h-2 w-2 ${timeLeft <= 5 ? 'bg-red-500' : 'bg-orange-500'}`}></span>
+                      </span>
+                      <span>⏱️ 倒數 {timeLeft} 秒</span>
+                    </div>
                   </div>
                 </div>
 
@@ -462,15 +523,39 @@ export default function QuestionScreen({
                   【 {q.slogan} 】
                 </div>
                 
-                {/* 10s Countdown notice to next slide */}
-                <div className="text-gray-200 font-extrabold text-xs sm:text-sm flex items-center gap-1.5 bg-white/5 border border-white/10 px-4 py-1.5 rounded-full shadow-lg">
-                  <span className="relative flex h-2 w-2">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-yellow-400 opacity-75"></span>
-                    <span className="relative inline-flex rounded-full h-2 w-2 bg-yellow-500"></span>
-                  </span>
-                  <span>⏱️ 停留</span>
-                  <span className="text-yellow-400 font-black text-sm mx-0.5">{timeLeft}</span>
-                  <span>秒後，將自動進入下一題！</span>
+                {/* 15s Countdown notice to next slide with Pause Button */}
+                <div className="flex items-center gap-2.5 flex-wrap justify-center">
+                  <div className="text-gray-200 font-extrabold text-xs sm:text-sm flex items-center gap-1.5 bg-white/5 border border-white/10 px-4 py-1.5 rounded-full shadow-lg">
+                    <span className="relative flex h-2 w-2">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-yellow-400 opacity-75"></span>
+                      <span className="relative inline-flex rounded-full h-2 w-2 bg-yellow-500"></span>
+                    </span>
+                    <span>⏱️ 停留</span>
+                    <span className="text-yellow-400 font-black text-sm mx-0.5">{timeLeft}</span>
+                    <span>秒後，將自動進入下一題！</span>
+                  </div>
+
+                  <button
+                    onClick={() => setIsPaused(!isPaused)}
+                    className={`flex items-center gap-1 px-3 py-1 rounded-full text-xs font-black transition-all border cursor-pointer select-none shadow-md ${
+                      isPaused
+                        ? "bg-emerald-500/20 border-emerald-500 text-emerald-400"
+                        : "bg-gray-800 border-white/10 text-gray-300 hover:border-yellow-500/50"
+                    }`}
+                    title={isPaused ? "點擊以繼續前進" : "主持人可在此暫停時間"}
+                  >
+                    {isPaused ? (
+                      <>
+                        <Play className="w-3 h-3 fill-emerald-400 text-emerald-400" />
+                        <span>繼續自動推進</span>
+                      </>
+                    ) : (
+                      <>
+                        <Pause className="w-3 h-3 fill-gray-300 text-gray-300" />
+                        <span>暫停推進</span>
+                      </>
+                    )}
+                  </button>
                 </div>
               </div>
 
