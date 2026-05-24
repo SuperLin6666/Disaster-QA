@@ -130,11 +130,11 @@ export default function QuestionScreen({
   const progressPercent = Math.round((qIdx / total) * 100);
 
   const [prevView, setPrevView] = useState({ qIdx, answered });
-  const [timeLeft, setTimeLeft] = useState(answered ? 10 : 20);
+  const [timeLeft, setTimeLeft] = useState(answered ? 15 : 30);
 
   if (prevView.qIdx !== qIdx || prevView.answered !== answered) {
     setPrevView({ qIdx, answered });
-    setTimeLeft(answered ? 10 : 20);
+    setTimeLeft(answered ? 15 : 30);
   }
 
   // Handle ticking countdown
