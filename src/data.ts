@@ -597,9 +597,9 @@ export function prepareMixedQuestions(): Question[] {
     });
   });
 
-  // Shuffle all questions and take the first 15
+  // Shuffle all questions and take the first 10
   const shuffledAll = shuffleArray(allQuestionsMapped);
-  const pickedQuestions = shuffledAll.slice(0, 15);
+  const pickedQuestions = shuffledAll.slice(0, 10);
 
   // Shuffle answer options independently
   return pickedQuestions.map((q) => {

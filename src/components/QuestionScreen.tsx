@@ -161,12 +161,12 @@ export default function QuestionScreen({
   const progressPercent = Math.round((qIdx / total) * 100);
 
   const [prevView, setPrevView] = useState({ qIdx, answered });
-  const [timeLeft, setTimeLeft] = useState(answered ? 15 : 30);
+  const [timeLeft, setTimeLeft] = useState(answered ? 15 : 40);
   const [isPaused, setIsPaused] = useState(false);
 
   if (prevView.qIdx !== qIdx || prevView.answered !== answered) {
     setPrevView({ qIdx, answered });
-    setTimeLeft(answered ? 15 : 30);
+    setTimeLeft(answered ? 15 : 40);
     setIsPaused(false);
   }
 
@@ -300,7 +300,7 @@ export default function QuestionScreen({
             <div 
               className="h-full transition-all duration-1000 ease-linear"
               style={{
-                width: `${(timeLeft / (answered ? 15 : 30)) * 100}%`,
+                width: `${(timeLeft / (answered ? 15 : 40)) * 100}%`,
                 backgroundColor: timeLeft <= 5 ? "#ef4444" : activeCh.color,
                 boxShadow: timeLeft <= 5 ? "0 0 10px #ef4444" : `0 0 10px ${activeCh.color}`,
               }}

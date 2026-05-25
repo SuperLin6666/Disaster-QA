@@ -135,7 +135,7 @@ export default function HomeScreen({
 
         {/* Description */}
         <p className="text-gray-200 text-sm sm:text-base md:text-lg lg:text-xl font-bold leading-relaxed max-w-xl mb-5 font-sans">
-          應對大自然危機，挑戰 4 種極端災害、20 道情境題目。
+          應對大自然危機，挑戰 4 種極端災害、10 道情境題目。
           <br />
           學習黃金防護觀念，與時間賽跑，成為真正的災害防護專家！
         </p>
